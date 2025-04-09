@@ -1,35 +1,69 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import "./App.css";
+import {
+  Box,
+  Container,
+  Grid,
+  MenuItem,
+  Paper,
+  Select,
+  Slider,
+  Typography,
+} from "@mui/material";
 
 function App() {
-  const [count, setCount] = useState(0)
-
+  const [waveform, setWaveform] = useState("Sine");
+  const [cutoff, setCutoff] = useState(50);
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Container>
+      <Paper>
+        <Grid>
+          {/* Oscillator Section */}
+          <Grid>
+            <Typography>Oscillator</Typography>
+            <Select
+              value={waveform}
+              onChange={(e) => setWaveform(e.target.value)}
+            >
+              <MenuItem value="Sine">Sine</MenuItem>
+            </Select>
+          </Grid>
+
+          {/* Filter Section */}
+          <Grid>
+            <Typography>Filter</Typography>
+            <Box>
+              <Slider
+                min={50}
+                max={10000}
+                value={cutoff}
+                onChange={(_, newValue) => setCutoff(newValue)}
+              />
+            </Box>
+          </Grid>
+
+          {/* Amp Section */}
+          <Grid>
+            <Typography>ADSR</Typography>
+            <Grid>
+              <Grid>
+                <Typography>Attack</Typography>
+              </Grid>
+              <Grid>
+                <Typography>Decay</Typography>
+              </Grid>
+              <Grid>
+                <Typography>Sustain</Typography>
+              </Grid>
+              <Grid>
+                <Typography>Release</Typography>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+      </Paper>
+    </Container>
+  );
 }
 
-export default App
+export default App;
