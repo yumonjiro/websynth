@@ -1,5 +1,3 @@
-import { useState } from "react";
-import "./App.css";
 import {
   Box,
   Container,
@@ -10,10 +8,26 @@ import {
   Slider,
   Typography,
 } from "@mui/material";
+import "./App.css";
+import { OscillatorType, useSynthStore } from "./store/synthstore";
 
 function App() {
-  const [waveform, setWaveform] = useState("Sine");
-  const [cutoff, setCutoff] = useState(50);
+  const {
+    oscillatorType,
+    filterCutoff,
+    // TODO filterResonance,
+    envAttack,
+    envDecay,
+    envSustain,
+    envRelease,
+    setOscillatorType,
+    setFilterCutoff,
+    // TODO setFilterResonance,
+    setEnvAttack,
+    setEnvDecay,
+    setEnvRelease,
+    setEnvSustain,
+  } = useSynthStore();
   return (
     <Container>
       <Paper>
@@ -22,10 +36,15 @@ function App() {
           <Grid>
             <Typography>Oscillator</Typography>
             <Select
-              value={waveform}
-              onChange={(e) => setWaveform(e.target.value)}
+              value={oscillatorType}
+              onChange={(e) =>
+                setOscillatorType(e.target.value as OscillatorType)
+              }
             >
-              <MenuItem value="Sine">Sine</MenuItem>
+              <MenuItem value="sine">Sine</MenuItem>
+              <MenuItem value="square">Sine</MenuItem>
+              <MenuItem value="sawtooth">Sine</MenuItem>
+              <MenuItem value="triangle">Sine</MenuItem>
             </Select>
           </Grid>
 
@@ -36,8 +55,8 @@ function App() {
               <Slider
                 min={50}
                 max={10000}
-                value={cutoff}
-                onChange={(_, newValue) => setCutoff(newValue)}
+                value={filterCutoff}
+                onChange={(_, newValue) => setFilterCutoff(newValue)}
               />
             </Box>
           </Grid>
@@ -48,19 +67,31 @@ function App() {
             <Grid>
               <Grid>
                 <Typography>Attack</Typography>
-                <Slider/>
+                <Slider
+                  value={envAttack}
+                  onChange={(_, value) => setEnvAttack(value)}
+                />
               </Grid>
               <Grid>
                 <Typography>Decay</Typography>
-                <Slider/>
+                <Slider
+                  value={envDecay}
+                  onChange={(_, value) => setEnvDecay(value)}
+                />
               </Grid>
               <Grid>
                 <Typography>Sustain</Typography>
-                <Slider/>
+                <Slider
+                  value={envSustain}
+                  onChange={(_, value) => setEnvSustain(value)}
+                />
               </Grid>
               <Grid>
                 <Typography>Release</Typography>
-                <Slider/>
+                <Slider
+                  value={envRelease}
+                  onChange={(_, value) => setEnvRelease(value)}
+                />
               </Grid>
             </Grid>
           </Grid>
