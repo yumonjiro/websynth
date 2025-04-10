@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export type OscillatorType = 'sine' | 'Square' | 'sawtooth' | 'triangle';
+//export type OscillatorType = 'sine' | 'square' | 'sawtooth' | 'triangle';
 
 interface SynthState {
   /*
@@ -37,7 +37,7 @@ export const useSynthStore = create<SynthState>((set) => ({
   filterResonance: 1,
   envAttack: 0.01,
   envDecay: 0.5,
-  envSustain: 0.1,
+  envSustain: 0.9,
   envRelease: 1,
 
   setOscillatorType: (oscType) => set({ oscillatorType: oscType }),

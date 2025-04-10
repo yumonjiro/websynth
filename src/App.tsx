@@ -9,9 +9,32 @@ import {
   Typography,
 } from "@mui/material";
 import "./App.css";
-import { OscillatorType, useSynthStore } from "./store/synthstore";
+import { useRef, useEffect } from "react";
+import { useSynthStore } from "./store/synthstore";
 
 function App() {
+  const audioCtxRef = useRef<AudioContext>(null);
+  const gainNodeRef = useRef<GainNode>(null);
+  const oscNodeRef = useRef<OscillatorNode>(null);
+  useEffect(() => {
+    const context = new window.AudioContext;
+    audioCtxRef.current = context;
+    const gainNode = context.createGain();
+    gainNodeRef.current = gainNode;
+    const oscNode = context.createOscillator();
+    oscNode.type = "sine";
+    oscNodeRef.current  = oscNode;
+    oscNode.connect(gainNode);
+    oscNode.frequency.setValueAtTime(440, context.currentTime);
+    oscNode.start();
+    gainNode.connect(context.destination);
+    gainNode.gain.setValueAtTime(0.5, context.currentTime);
+
+
+    
+  return ;
+    
+} ,[]);
   const {
     oscillatorType,
     filterCutoff,
@@ -28,6 +51,8 @@ function App() {
     setEnvRelease,
     setEnvSustain,
   } = useSynthStore();
+
+
   return (
     <Container>
       <Paper>
@@ -42,9 +67,9 @@ function App() {
               }
             >
               <MenuItem value="sine">Sine</MenuItem>
-              <MenuItem value="square">Sine</MenuItem>
-              <MenuItem value="sawtooth">Sine</MenuItem>
-              <MenuItem value="triangle">Sine</MenuItem>
+              <MenuItem value="square">Square</MenuItem>
+              <MenuItem value="sawtooth">Sawtooth</MenuItem>
+              <MenuItem value="triangle">Triangle</MenuItem>
             </Select>
           </Grid>
 

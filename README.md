@@ -1,10 +1,17 @@
 
-## ウェブ上で動くシンセサイザー
-### 機能  
-- 簡単な減算合成方式のシンセサイザー
+# ウェブ上で動くシンセサイザー
+## 概要
+- シンプルな減算合成方式のシンセサイザー
 - プリセットをDBに保存して、読み込めるようにする
 
-## 減算方式シンセサイザーの機能要件  
+# 機能要件  
+
+## 参考  
+* [What is subtractive synthesis? Native Instruments](https://blog.native-instruments.com/subtractive-synthesis/)  
+* [減算合成の仕組み Apple](https://support.apple.com/ja-jp/guide/logicpro/lgsife41a22f/11.1/mac/14.6) ←とりあえずこの通りに実装してみたい
+* [WebAudio API reference](https://developer.mozilla.org/ja/docs/Web/API/Web_Audio_API/Using_Web_Audio_API)
+
+## 機能
 1. 音源部
    - オシレーター  
         - 波形選択(Sine, Square, Sawtooth, Triangle)  
@@ -42,10 +49,11 @@ UIについて
 
 スライダーやノブなどで直感的に操作できるようにしたい  
 
-### 実装について  
+## 実装について  
 - フロントエンド  
   - React + TypeScript + MUI + Zustand  
   - 音声処理はWeb Audio APIを使用  
 - バックエンド  
   - 未定  
 - とりあえずフロントエンドを作る。簡単な減算合成方式のシンセサイザー  
+
