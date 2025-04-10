@@ -48,15 +48,19 @@ function App() {
             <Grid>
               <Grid>
                 <Typography>Attack</Typography>
+                <Slider/>
               </Grid>
               <Grid>
                 <Typography>Decay</Typography>
+                <Slider/>
               </Grid>
               <Grid>
                 <Typography>Sustain</Typography>
+                <Slider/>
               </Grid>
               <Grid>
                 <Typography>Release</Typography>
+                <Slider/>
               </Grid>
             </Grid>
           </Grid>
