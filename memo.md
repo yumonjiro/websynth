@@ -32,7 +32,7 @@ UI の表示に関係ない値(WebAudio API の AudioContext)を、再レンダ�
 useEffect(関数を返す関数、配列)
 配列で指定されたタイミングで関数が実行され、コンポーネントが不要になった時に関数で return された関数が実行される。
 
-## useCallback
+### useCallback
 
 レンダー間で関数の定義をキャッシュしてくれる。
 ある値に依存して計算結果が変わる関数がある場合、その値が変更されていないのに、レンダー毎に関数の中身を再計算すると非効率なことがある。
@@ -41,14 +41,14 @@ useCallback でキャッシュすれば無駄な再計算を省ける！
 
 - useAudioEngine.ts の noteOn 関数。noteOn は oscillatorType が変更されない限り、その挙動は変わらないが、普通に実装するとコンポーネントが再レンダーされるたびにオシレータの初期化がされてしまう。callBack で実装すれば、oscillatorType が変更された場合のみオシレーターを再初期化するように実装できる
 
-## Custom Hook
+### Custom Hook
 
 自分で Hook を作れる。 useCustomHook(CustomHook は任意の名前)とすれば、react がその関数を Hook だと認識する。
 Custom Hook 内では React の組み込みの Hook が扱える(通常の関数内では React Hook は利用できない)。React の状態に依存する関数や、他のフックなどと連携する必要のあるロジックをカプセル化できるのがすごい便利。
 
 - webAudioAPI の初期化や、値の変更などは React の状態やコンポーネントのライフサイクル(初期化、際レンダリング、State の変更)などに依存するので、ロジックを分離する際には Custom Hook を作成すると都合がいい。
 
-## Zustandで配列を書き換えるとき
+### Zustandで配列を書き換えるとき
  参考：[state 内の配列の更新](https://ja.react.dev/learn/updating-arrays-in-state)
  書き換える系の関数は使っちゃダメ。配列はreadonly
  新しい配列を作って再代入が基本。mapとか。
@@ -84,6 +84,9 @@ Custom Hook 内では React の組み込みの Hook が扱える(通常の関数
      - MIDI 入力
    - オーディオ出力
      - 最終的にはステレオ出力したい。
+
+## Material UI
+
 
 UI について  
 ・オシレーターセクション  
