@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useSynthStore } from "./store/synthstore";
 
 export const useAudioEngine = () => {
@@ -7,8 +7,8 @@ export const useAudioEngine = () => {
   const isInitialized = useRef<boolean>(false);
   const isPlaying = useRef<boolean>(false);
   const oscNodeRef = useRef<OscillatorNode | null>(null);
-
-  const { oscillatorType } = useSynthStore();
+  const filterNodeRef = useRef<BiquadFilterNode | null>(null);
+  const { oscillatorType, filterCutoff } = useSynthStore();
 
   const initializeAudioContext = useCallback(() => {
     if (isInitialized.current) {
@@ -18,22 +18,38 @@ export const useAudioEngine = () => {
     const gainNode = audioCtxRef.current.createGain();
     gainNodeRef.current = gainNode;
     gainNode.gain.setValueAtTime(0.5, audioCtxRef.current.currentTime);
-    gainNode.connect(audioCtxRef.current.destination);
 
+    const filter = audioCtxRef.current.createBiquadFilter();
+    gainNode.connect(filter);
+    filter.connect(audioCtxRef.current.destination);
+    filter.frequency.setValueAtTime(
+      filterCutoff,
+      audioCtxRef.current.currentTime
+    );
+    filterNodeRef.current = filter;
     isInitialized.current = true;
-  }, []);
+  }, [filterCutoff]);
 
+  useEffect(() => {
+    if (audioCtxRef.current && filterNodeRef.current) {
+      filterNodeRef.current.frequency.setValueAtTime(
+        filterCutoff,
+        audioCtxRef.current.currentTime
+      );
+      console.debug(`new filterCutoff: ${filterCutoff}`);
+    }
+  }, [filterCutoff]);
   const noteOn = useCallback(() => {
-    if (!isInitialized) {
+    if (!isInitialized.current) {
       initializeAudioContext();
     }
     if (!audioCtxRef.current || !gainNodeRef.current) {
       return;
     }
     const ctx = audioCtxRef.current;
-    if(oscNodeRef.current != null)
-    {
-        oscNodeRef.current.stop();
+    if (oscNodeRef.current != null) {
+      oscNodeRef.current.stop();
+      oscNodeRef.current.disconnect();
     }
     const osc = ctx.createOscillator();
     oscNodeRef.current = osc;
@@ -50,8 +66,9 @@ export const useAudioEngine = () => {
     if (oscNodeRef.current) {
       const osc = oscNodeRef.current;
       osc.stop();
+      osc.disconnect();
       oscNodeRef.current = null;
     }
   }, []);
-  return {initializeAudioContext, noteOn, noteOff};
+  return { initializeAudioContext, noteOn, noteOff };
 };

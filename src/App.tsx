@@ -70,7 +70,7 @@ function App() {
 
           {/* Filter Section */}
           <Grid>
-            <Typography>Filter</Typography>
+            <Typography>Filter : {filterCutoff}</Typography>
             <Box>
               <Slider
                 min={50}
