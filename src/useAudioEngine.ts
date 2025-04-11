@@ -1,16 +1,20 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useSynthStore } from "./store/synthstore";
 
+let audioContext: AudioContext | null = null;
 export const useAudioEngine = () => {
-  const audioCtxRef = useRef<AudioContext | null>(null);
-  const gainNodeRef = useRef<GainNode | null>(null);
+  const masterGainNodeRef = useRef<GainNode | null>(null);
   const isInitialized = useRef<boolean>(false);
   const isPlaying = useRef<boolean>(false);
-  const oscNodeRef = useRef<OscillatorNode | null>(null);
+  //id -> オシレーターのマップ
+  const activeOscillatorNodes = useRef<Map<number, OscillatorNode>>(new Map());
+  //id -> オシレーターのゲインのマップ
+  const activeOscillatorGains = useRef<Map<number, GainNode>>(new Map());
   const filterNodeRef = useRef<BiquadFilterNode | null>(null);
   const {
-    oscillatorType,
+    oscillators,
     filterCutoff,
+    filterResonance,
     envAttack,
     envDecay,
     envSustain,
@@ -18,101 +22,175 @@ export const useAudioEngine = () => {
   } = useSynthStore();
 
   const initializeAudioContext = useCallback(() => {
+    //audioContext・フィルター・マスターゲインノードの初期化を行う
     if (isInitialized.current) {
       return;
     }
-    audioCtxRef.current = new window.AudioContext();
-    const gainNode = audioCtxRef.current.createGain();
-    gainNodeRef.current = gainNode;
-    gainNode.gain.setValueAtTime(0.5, audioCtxRef.current.currentTime);
+    audioContext = new window.AudioContext();
+    if (!audioContext) {
+      console.log("Failed to initialize Audio");
+    }
+    //マスターゲインノード
+    const masterGainNode = audioContext.createGain();
+    masterGainNodeRef.current = masterGainNode;
+    masterGainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
+    //フィルターの初期化
+    const filter = audioContext.createBiquadFilter();
 
-    const filter = audioCtxRef.current.createBiquadFilter();
-    gainNode.connect(filter);
-    filter.connect(audioCtxRef.current.destination);
-    filter.frequency.setValueAtTime(
-      filterCutoff,
-      audioCtxRef.current.currentTime
-    );
+    filter.frequency.setValueAtTime(filterCutoff, audioContext.currentTime);
+    filter.Q.setValueAtTime(filterResonance, audioContext.currentTime);
     filterNodeRef.current = filter;
     isInitialized.current = true;
-  }, [filterCutoff]);
+
+    //マスターに接続
+    filter.connect(masterGainNode);
+    masterGainNode.connect(audioContext.destination);
+    isInitialized.current = true;
+  }, [filterCutoff, filterResonance]);
 
   useEffect(() => {
-    if (audioCtxRef.current && filterNodeRef.current) {
+    if (audioContext && filterNodeRef.current) {
       filterNodeRef.current.frequency.setValueAtTime(
         filterCutoff,
-        audioCtxRef.current.currentTime
+        audioContext.currentTime
       );
-      console.debug(`new filterCutoff: ${filterCutoff}`);
+      filterNodeRef.current.Q.setValueAtTime(
+        filterResonance,
+        audioContext.currentTime
+      );
+      console.debug(
+        `new filterCutoff: ${filterCutoff} \n new filter Q: ${filterResonance}`
+      );
     }
-  }, [filterCutoff]);
-  const noteOn = useCallback(() => {
-    if (!isInitialized.current) {
-      initializeAudioContext();
-    }
-    if (!audioCtxRef.current || !gainNodeRef.current) {
-      return;
-    }
-    const ctx = audioCtxRef.current;
-    if (oscNodeRef.current != null) {
-      oscNodeRef.current.stop();
-      oscNodeRef.current.disconnect();
-    }
-    const osc = ctx.createOscillator();
-    oscNodeRef.current = osc;
-    osc.connect(gainNodeRef.current);
-    osc.type = oscillatorType;
-    osc.start();
-    isPlaying.current = true;
-  }, [oscillatorType, initializeAudioContext]);
+  }, [filterCutoff, filterResonance]);
+
+  const noteOn = useCallback(
+    (freq: number) => {
+      if (!isInitialized.current) {
+        initializeAudioContext();
+      }
+
+      oscillators.forEach((oscSettings) => {
+        if (
+          !audioContext ||
+          !masterGainNodeRef.current ||
+          !filterNodeRef.current
+        )
+          return;
+        const now = audioContext.currentTime;
+        const frequency = freq * Math.pow(2, oscSettings.octaveOffset);
+        const osc = audioContext.createOscillator();
+        osc.frequency.setValueAtTime(frequency, now);
+        osc.type = oscSettings.type;
+        const gainNode = audioContext.createGain();
+        gainNode.gain.setValueAtTime(oscSettings.gain, now);
+
+        //接続
+        osc.connect(gainNode);
+        gainNode.connect(filterNodeRef.current);
+
+        activeOscillatorGains.current.set(oscSettings.id, gainNode);
+        activeOscillatorNodes.current.set(oscSettings.id, osc);
+      });
+
+      activeOscillatorNodes.current.forEach((osc) => {
+        osc.start();
+      });
+    },
+    [oscillators, initializeAudioContext]
+  );
 
   const noteOff = useCallback(() => {
     if (!isPlaying.current) {
       return;
     }
-    if (oscNodeRef.current) {
-      const osc = oscNodeRef.current;
-      osc.stop();
-      osc.disconnect();
-      oscNodeRef.current = null;
+    if (activeOscillatorNodes.current.size > 0) {
+      activeOscillatorNodes.current.forEach((osc) => {
+        osc.stop();
+        osc.disconnect();
+      });
     }
+    //オシレーターの削除
+    activeOscillatorNodes.current.clear();
+    activeOscillatorGains.current.clear();
   }, []);
 
-  const noteHold = useCallback(() => {
-    if (!isInitialized.current) {
-      initializeAudioContext();
-    }
-    if (!audioCtxRef.current || !gainNodeRef.current) {
-      return;
-    }
-    const ctx = audioCtxRef.current;
-    if (oscNodeRef.current != null) {
-      oscNodeRef.current.stop();
-      oscNodeRef.current.disconnect();
-    }
-    const osc = ctx.createOscillator();
-    oscNodeRef.current = osc;
-    osc.connect(gainNodeRef.current);
-    const gainNode = gainNodeRef.current;
-    //エンベロープを一旦リセット
-    gainNode.gain.cancelScheduledValues(0);
+  const noteHold = useCallback(
+    (freq: number) => {
+      if (!isInitialized.current) {
+        initializeAudioContext();
+      }
+      if (
+        !audioContext ||
+        !masterGainNodeRef.current ||
+        !filterNodeRef.current
+      ) {
+        return;
+      }
+      if (activeOscillatorNodes.current.size > 0) {
+        activeOscillatorNodes.current.forEach((osc) => {
+          osc.stop();
+          osc.disconnect();
+        });
+      }
 
-    gainNode.gain.linearRampToValueAtTime(1, audioCtxRef.current.currentTime + envAttack);
-    gainNode.gain.setTargetAtTime(envSustain, audioCtxRef.current.currentTime + envAttack, envDecay/ 5); // (5秒後に対象とする値の99%まで近づく)
-    gainNode.gain.setValueAtTime(1, envAttack)
-    osc.type = oscillatorType;
-    osc.start();
-    isPlaying.current = true;
-  }, [oscillatorType, initializeAudioContext, envAttack, envDecay, envSustain]);
+      oscillators.forEach((oscSettings) => {
+        if (
+          !audioContext ||
+          !masterGainNodeRef.current ||
+          !filterNodeRef.current
+        )
+          return;
+        const now = audioContext.currentTime;
+        const frequency = freq * Math.pow(2, oscSettings.octaveOffset);
+        const osc = audioContext.createOscillator();
+        osc.frequency.setValueAtTime(frequency, now);
+        osc.type = oscSettings.type;
+        const gainNode = audioContext.createGain();
+        gainNode.gain.setValueAtTime(oscSettings.gain, now);
+
+        //接続
+        osc.connect(gainNode);
+        gainNode.connect(filterNodeRef.current);
+
+        activeOscillatorGains.current.set(oscSettings.id, gainNode);
+        activeOscillatorNodes.current.set(oscSettings.id, osc);
+      });
+
+      //エンベロープを一旦リセット
+      const masterGain = masterGainNodeRef.current;
+      masterGain.gain.cancelScheduledValues(0);
+      masterGain.gain.setValueAtTime(0, audioContext.currentTime);
+      masterGain.gain.linearRampToValueAtTime(1, audioContext.currentTime + envAttack);
+      masterGain.gain.setTargetAtTime(
+        envSustain,
+        audioContext.currentTime + envAttack,
+        envDecay / 5
+      ); // (envAttack + envDecay秒後に対象とする値の99%まで近づく)
+
+      activeOscillatorNodes.current.forEach((osc) => {
+        osc.start();
+      });
+      isPlaying.current = true;
+    },
+    [oscillators, initializeAudioContext, envAttack, envDecay, envSustain]
+  );
 
   const noteRelease = useCallback(() => {
-    if(!gainNodeRef.current || !audioCtxRef.current)
+    if(!isPlaying.current)
     {
       return;
     }
-    const gainNode = gainNodeRef.current;
+    if (!masterGainNodeRef.current || !audioContext) {
+      return;
+    }
+    const gainNode = masterGainNodeRef.current;
     gainNode.gain.cancelScheduledValues(0);
-    gainNode.gain.linearRampToValueAtTime(0, audioCtxRef.current.currentTime + envRelease)
-  }, [])
+    gainNode.gain.linearRampToValueAtTime(
+      0,
+      audioContext.currentTime + envRelease
+    );
+    
+  }, [envRelease]);
   return { initializeAudioContext, noteHold, noteRelease, noteOn, noteOff };
 };

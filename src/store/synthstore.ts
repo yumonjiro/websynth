@@ -2,6 +2,19 @@ import { create } from "zustand";
 
 //export type OscillatorType = 'sine' | 'square' | 'sawtooth' | 'triangle';
 
+interface OscillatorSettings {
+  //オシレーターを識別するための番号
+  id: number; 
+  //
+  enabled:boolean,
+  //
+  type:OscillatorType,
+  // Amplitude
+  gain: number,
+  octaveOffset: number,
+  detune: number,
+
+}
 interface SynthState {
   /*
     必要な状態：
@@ -10,7 +23,7 @@ interface SynthState {
     */
 
   //OSC
-  oscillatorType: OscillatorType;
+  oscillators:OscillatorSettings[],
 
   //filter
   filterCutoff: number;
@@ -22,7 +35,10 @@ interface SynthState {
   envSustain: number;
   envRelease: number;
 
-  setOscillatorType: (oscType: OscillatorType) => void;
+  setOscillatorType: (id:number,oscType: OscillatorType) => void;
+  setOscillatorGain: (id:number, value: number) => void;
+  //setOscillatorOctave: (id:number, value: number) => void;
+
   setFilterCutoff: (value: number) => void;
   setFilterResonance: (value: number) => void;
   setEnvAttack: (value: number) => void;
@@ -31,8 +47,12 @@ interface SynthState {
   setEnvRelease: (value: number) => void;
 }
 
+const initialOscillators: OscillatorSettings[] = [
+  {id:1, enabled: true, gain:0.5, type: "sine", octaveOffset: 0, detune: 0},
+  {id:2, enabled: true, gain:0.5, type: "sine", octaveOffset: 0, detune: 0},
+];
 export const useSynthStore = create<SynthState>((set) => ({
-  oscillatorType: "sine",
+  oscillators: initialOscillators,
   filterCutoff: 5000,
   filterResonance: 1,
   envAttack: 0.01,
@@ -40,7 +60,15 @@ export const useSynthStore = create<SynthState>((set) => ({
   envSustain: 0.9,
   envRelease: 1,
 
-  setOscillatorType: (oscType) => set({ oscillatorType: oscType }),
+  setOscillatorType: (id, oscType) => set((state) => ({
+    oscillators:state.oscillators.map(
+      osc => 
+        osc.id === id ? {...osc, type:oscType }  : osc )
+  })),
+  setOscillatorGain: (id, value) => set((state) => ({
+    oscillators:state.oscillators.map(
+      osc => osc.id === id ? {...osc, gain:value} : osc )
+  })),
   setFilterCutoff: (value) => set({ filterCutoff: value }),
   setFilterResonance: (value) => set({ filterResonance: value }),
   setEnvAttack: (value) => set({ envAttack: value }),

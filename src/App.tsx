@@ -15,7 +15,8 @@ import { useSynthStore } from "./store/synthstore";
 import { useAudioEngine } from "./useAudioEngine";
 
 function App() {
-  const { initializeAudioContext, noteHold , noteRelease, noteOn, noteOff } = useAudioEngine();
+  const { initializeAudioContext, noteHold, noteRelease, noteOn, noteOff } =
+    useAudioEngine();
   const [isInitialized, setIsInitialized] = useState(false);
   const handleInitialize = () => {
     if (isInitialized) {
@@ -28,16 +29,17 @@ function App() {
     return;
   }, []);
   const {
-    oscillatorType,
+    oscillators,
     filterCutoff,
-    // TODO filterResonance,
+    filterResonance,
     envAttack,
     envDecay,
     envSustain,
     envRelease,
     setOscillatorType,
+    setOscillatorGain,
     setFilterCutoff,
-    // TODO setFilterResonance,
+    setFilterResonance,
     setEnvAttack,
     setEnvDecay,
     setEnvRelease,
@@ -54,18 +56,28 @@ function App() {
         <Grid>
           {/* Oscillator Section */}
           <Grid>
-            <Typography>Oscillator</Typography>
-            <Select
-              value={oscillatorType}
-              onChange={(e) =>
-                setOscillatorType(e.target.value as OscillatorType)
-              }
-            >
-              <MenuItem value="sine">Sine</MenuItem>
-              <MenuItem value="square">Square</MenuItem>
-              <MenuItem value="sawtooth">Sawtooth</MenuItem>
-              <MenuItem value="triangle">Triangle</MenuItem>
-            </Select>
+            {
+              oscillators.map((oscSettings) => {
+                return (
+                  <Grid key={oscSettings.id}>
+                  <Typography>Oscillator {oscSettings.id}</Typography>
+                  <Select
+                    value={oscSettings.type}
+                    onChange={(e) =>
+                      setOscillatorType(oscSettings.id, e.target.value as OscillatorType)
+                    }
+                  >
+                    <MenuItem value="sine">Sine</MenuItem>
+                    <MenuItem value="square">Square</MenuItem>
+                    <MenuItem value="sawtooth">Sawtooth</MenuItem>
+                    <MenuItem value="triangle">Triangle</MenuItem>
+                  </Select>
+                  <Slider min={0} max={1.0} step={0.01} value={oscSettings.gain} onChange={(_, value) => setOscillatorGain(oscSettings.id, value)}/>
+                </Grid>)
+            })
+
+            }
+            
           </Grid>
 
           {/* Filter Section */}
@@ -73,10 +85,17 @@ function App() {
             <Typography>Filter : {filterCutoff}</Typography>
             <Box>
               <Slider
-                min={50}
-                max={10000}
+                min={20}
+                max={20000}
                 value={filterCutoff}
                 onChange={(_, newValue) => setFilterCutoff(newValue)}
+              />
+              <Slider
+                min={0.1}
+                max={100}
+                step={0.1}
+                value={filterResonance}
+                onChange={(_, newValue) => setFilterResonance(newValue)}
               />
             </Box>
           </Grid>
@@ -86,31 +105,43 @@ function App() {
             <Typography>ADSR</Typography>
             <Grid>
               <Grid>
-                <Typography>Attack</Typography>
+                <Typography>Attack: {envAttack}</Typography>
                 <Slider
                   value={envAttack}
                   onChange={(_, value) => setEnvAttack(value)}
+                  min={0.01}
+                  max={10.0}
+                  step={0.1}
                 />
               </Grid>
               <Grid>
-                <Typography>Decay</Typography>
+                <Typography>Decay:{envDecay}</Typography>
                 <Slider
                   value={envDecay}
                   onChange={(_, value) => setEnvDecay(value)}
+                  min={0}
+                  max={10}
+                  step={0.1}
                 />
               </Grid>
               <Grid>
-                <Typography>Sustain</Typography>
+                <Typography>Sustain:{envSustain}</Typography>
                 <Slider
                   value={envSustain}
                   onChange={(_, value) => setEnvSustain(value)}
+                  min={0.0}
+                  max={1.0}
+                  step={0.01}
                 />
               </Grid>
               <Grid>
-                <Typography>Release</Typography>
+                <Typography>Release:{envRelease}</Typography>
                 <Slider
                   value={envRelease}
                   onChange={(_, value) => setEnvRelease(value)}
+                  min={0}
+                  max={10}
+                  step={0.1}
                 />
               </Grid>
             </Grid>
@@ -119,8 +150,10 @@ function App() {
 
         {/* keyboard section */}
         <Grid>
-          <Button onClick={noteOn}>Start</Button>
-          <Button onMouseDown={noteHold} onMouseUp={noteRelease}>Hold to play note</Button>
+          <Button onClick={() => noteOn(440)}>Start</Button>
+          <Button onMouseDown={() => noteHold(440)} onMouseUp={noteRelease}>
+            Hold to play note
+          </Button>
           <Button onClick={noteOff}>Stop</Button>
         </Grid>
       </Paper>
