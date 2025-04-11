@@ -64,57 +64,6 @@ export const useAudioEngine = () => {
     }
   }, [filterCutoff, filterResonance]);
 
-  const noteOn = useCallback(
-    (freq: number) => {
-      if (!isInitialized.current) {
-        initializeAudioContext();
-      }
-
-      oscillators.forEach((oscSettings) => {
-        if (
-          !audioContext ||
-          !masterGainNodeRef.current ||
-          !filterNodeRef.current
-        )
-          return;
-        const now = audioContext.currentTime;
-        const frequency = freq * Math.pow(2, oscSettings.octaveOffset);
-        const osc = audioContext.createOscillator();
-        osc.frequency.setValueAtTime(frequency, now);
-        osc.type = oscSettings.type;
-        const gainNode = audioContext.createGain();
-        gainNode.gain.setValueAtTime(oscSettings.gain, now);
-
-        //接続
-        osc.connect(gainNode);
-        gainNode.connect(filterNodeRef.current);
-
-        activeOscillatorGains.current.set(oscSettings.id, gainNode);
-        activeOscillatorNodes.current.set(oscSettings.id, osc);
-      });
-
-      activeOscillatorNodes.current.forEach((osc) => {
-        osc.start();
-      });
-    },
-    [oscillators, initializeAudioContext]
-  );
-
-  const noteOff = useCallback(() => {
-    if (!isPlaying.current) {
-      return;
-    }
-    if (activeOscillatorNodes.current.size > 0) {
-      activeOscillatorNodes.current.forEach((osc) => {
-        osc.stop();
-        osc.disconnect();
-      });
-    }
-    //オシレーターの削除
-    activeOscillatorNodes.current.clear();
-    activeOscillatorGains.current.clear();
-  }, []);
-
   const noteHold = useCallback(
     (freq: number) => {
       if (!isInitialized.current) {
@@ -192,5 +141,5 @@ export const useAudioEngine = () => {
     );
     
   }, [envRelease]);
-  return { initializeAudioContext, noteHold, noteRelease, noteOn, noteOff };
+  return { initializeAudioContext, noteHold, noteRelease };
 };

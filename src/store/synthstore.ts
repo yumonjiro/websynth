@@ -3,6 +3,7 @@ import { create } from "zustand";
 //export type OscillatorType = 'sine' | 'square' | 'sawtooth' | 'triangle';
 
 interface OscillatorSettings {
+  
   //オシレーターを識別するための番号
   id: number; 
   //
@@ -15,13 +16,14 @@ interface OscillatorSettings {
   detune: number,
 
 }
+export type VoicingType = 'mono' | 'poly';
 interface SynthState {
   /*
     必要な状態：
     oscillatorType(waveFormのこと。WebAudioAPIの方の命名に準拠)
     octave
     */
-
+  voicing: VoicingType,
   //OSC
   oscillators:OscillatorSettings[],
 
@@ -34,7 +36,7 @@ interface SynthState {
   envDecay: number;
   envSustain: number;
   envRelease: number;
-
+  setVoicingType: (voicingType:VoicingType) => void;
   setOscillatorType: (id:number,oscType: OscillatorType) => void;
   setOscillatorGain: (id:number, value: number) => void;
   //setOscillatorOctave: (id:number, value: number) => void;
@@ -52,6 +54,7 @@ const initialOscillators: OscillatorSettings[] = [
   {id:2, enabled: true, gain:0.5, type: "sine", octaveOffset: 0, detune: 0},
 ];
 export const useSynthStore = create<SynthState>((set) => ({
+  voicing: 'mono',
   oscillators: initialOscillators,
   filterCutoff: 5000,
   filterResonance: 1,
@@ -59,7 +62,7 @@ export const useSynthStore = create<SynthState>((set) => ({
   envDecay: 0.5,
   envSustain: 0.9,
   envRelease: 1,
-
+  setVoicingType: (voicingType) => set({voicing:voicingType}),
   setOscillatorType: (id, oscType) => set((state) => ({
     oscillators:state.oscillators.map(
       osc => 
