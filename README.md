@@ -9,6 +9,13 @@
 * [減算合成の仕組み Apple](https://support.apple.com/ja-jp/guide/logicpro/lgsife41a22f/11.1/mac/14.6) ←とりあえずこの通りに実装してみたい
 * [WebAudio API reference](https://developer.mozilla.org/ja/docs/Web/API/Web_Audio_API/Using_Web_Audio_API)
 
+## 進捗
+- Synth
+    - Oscillator
+        - [x] 波形選択
+        - [] オクターブ切り替え
+        - [] ファインチューン
+        - [] 複数オシレーターの実装
 ## 機能
 1. 音源部
    - オシレーター  
