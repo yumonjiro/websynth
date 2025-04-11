@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Container,
   Grid,
   MenuItem,
@@ -9,32 +10,23 @@ import {
   Typography,
 } from "@mui/material";
 import "./App.css";
-import { useRef, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSynthStore } from "./store/synthstore";
+import { useAudioEngine } from "./useAudioEngine";
 
 function App() {
-  const audioCtxRef = useRef<AudioContext>(null);
-  const gainNodeRef = useRef<GainNode>(null);
-  const oscNodeRef = useRef<OscillatorNode>(null);
+  const { initializeAudioContext, noteOn, noteOff } = useAudioEngine();
+  const [isInitialized, setIsInitialized] = useState(false);
+  const handleInitialize = () => {
+    if (isInitialized) {
+      return;
+    }
+    initializeAudioContext();
+    setIsInitialized(true);
+  };
   useEffect(() => {
-    const context = new window.AudioContext;
-    audioCtxRef.current = context;
-    const gainNode = context.createGain();
-    gainNodeRef.current = gainNode;
-    const oscNode = context.createOscillator();
-    oscNode.type = "sine";
-    oscNodeRef.current  = oscNode;
-    oscNode.connect(gainNode);
-    oscNode.frequency.setValueAtTime(440, context.currentTime);
-    oscNode.start();
-    gainNode.connect(context.destination);
-    gainNode.gain.setValueAtTime(0.5, context.currentTime);
-
-
-    
-  return ;
-    
-} ,[]);
+    return;
+  }, []);
   const {
     oscillatorType,
     filterCutoff,
@@ -52,10 +44,13 @@ function App() {
     setEnvSustain,
   } = useSynthStore();
 
-
   return (
     <Container>
       <Paper>
+        <Grid>
+          <Button onClick={handleInitialize}>Initialize Audio Engine</Button>
+        </Grid>
+        {/* Synth Control Section */}
         <Grid>
           {/* Oscillator Section */}
           <Grid>
@@ -120,6 +115,12 @@ function App() {
               </Grid>
             </Grid>
           </Grid>
+        </Grid>
+
+        {/* keyboard section */}
+        <Grid>
+          <Button onClick={noteOn}>Start</Button>
+          <Button onClick={noteOff}>Stop</Button>
         </Grid>
       </Paper>
     </Container>
