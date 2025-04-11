@@ -15,7 +15,7 @@ import { useSynthStore } from "./store/synthstore";
 import { useAudioEngine } from "./useAudioEngine";
 
 function App() {
-  const { initializeAudioContext, noteOn, noteOff } = useAudioEngine();
+  const { initializeAudioContext, noteHold , noteRelease, noteOn, noteOff } = useAudioEngine();
   const [isInitialized, setIsInitialized] = useState(false);
   const handleInitialize = () => {
     if (isInitialized) {
@@ -120,6 +120,7 @@ function App() {
         {/* keyboard section */}
         <Grid>
           <Button onClick={noteOn}>Start</Button>
+          <Button onMouseDown={noteHold} onMouseUp={noteRelease}>Hold to play note</Button>
           <Button onClick={noteOff}>Stop</Button>
         </Grid>
       </Paper>

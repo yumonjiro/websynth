@@ -8,7 +8,14 @@ export const useAudioEngine = () => {
   const isPlaying = useRef<boolean>(false);
   const oscNodeRef = useRef<OscillatorNode | null>(null);
   const filterNodeRef = useRef<BiquadFilterNode | null>(null);
-  const { oscillatorType, filterCutoff } = useSynthStore();
+  const {
+    oscillatorType,
+    filterCutoff,
+    envAttack,
+    envDecay,
+    envSustain,
+    envRelease,
+  } = useSynthStore();
 
   const initializeAudioContext = useCallback(() => {
     if (isInitialized.current) {
@@ -70,5 +77,39 @@ export const useAudioEngine = () => {
       oscNodeRef.current = null;
     }
   }, []);
-  return { initializeAudioContext, noteOn, noteOff };
+
+  const noteHold = useCallback(() => {
+    if (!isInitialized.current) {
+      initializeAudioContext();
+    }
+    if (!audioCtxRef.current || !gainNodeRef.current) {
+      return;
+    }
+    const ctx = audioCtxRef.current;
+    if (oscNodeRef.current != null) {
+      oscNodeRef.current.stop();
+      oscNodeRef.current.disconnect();
+    }
+    const osc = ctx.createOscillator();
+    oscNodeRef.current = osc;
+    osc.connect(gainNodeRef.current);
+    const gainNode = gainNodeRef.current;
+    gainNode.gain.linearRampToValueAtTime(1, audioCtxRef.current.currentTime + envAttack);
+    gainNode.gain.setTargetAtTime(envSustain, audioCtxRef.current.currentTime + envAttack, envDecay/ 5); // (5秒後に対象とする値の99%まで近づく)
+    gainNode.gain.setValueAtTime(1, envAttack)
+    osc.type = oscillatorType;
+    osc.start();
+    isPlaying.current = true;
+  }, [oscillatorType, initializeAudioContext, envAttack, envDecay, envSustain]);
+
+  const noteRelease = useCallback(() => {
+    if(!gainNodeRef.current || !audioCtxRef.current)
+    {
+      return;
+    }
+    const gainNode = gainNodeRef.current;
+    gainNode.gain.cancelScheduledValues(0);
+    gainNode.gain.linearRampToValueAtTime(0, audioCtxRef.current.currentTime + envRelease)
+  }, [])
+  return { initializeAudioContext, noteHold, noteRelease, noteOn, noteOff };
 };
