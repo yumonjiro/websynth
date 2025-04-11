@@ -140,7 +140,7 @@ function App() {
 
             {/* Filter Section */}
             <Grid size={{md:3}}>
-              <Typography>Filter : {filterCutoff}</Typography>
+              <Typography>Cutoff:{filterCutoff}</Typography>
               <Box>
                 <Slider
                   min={20}
@@ -149,6 +149,8 @@ function App() {
                   onChange={(_, newValue) => setFilterCutoff(newValue)}
                   size="small"
                 />
+              <Typography>Q:{filterResonance}</Typography>
+
                 <Slider
                   min={0.1}
                   max={100}
