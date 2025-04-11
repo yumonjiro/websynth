@@ -94,6 +94,9 @@ export const useAudioEngine = () => {
     oscNodeRef.current = osc;
     osc.connect(gainNodeRef.current);
     const gainNode = gainNodeRef.current;
+    //エンベロープを一旦リセット
+    gainNode.gain.cancelScheduledValues(0);
+
     gainNode.gain.linearRampToValueAtTime(1, audioCtxRef.current.currentTime + envAttack);
     gainNode.gain.setTargetAtTime(envSustain, audioCtxRef.current.currentTime + envAttack, envDecay/ 5); // (5秒後に対象とする値の99%まで近づく)
     gainNode.gain.setValueAtTime(1, envAttack)
