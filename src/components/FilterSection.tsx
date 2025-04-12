@@ -5,7 +5,7 @@ export default function FilterSection() {
   const {
     filterCutoff, filterResonance, filterLFOAmount,
     setFilterCutoff, setFilterResonance, setFilterLFOAmount
-  } = useSynthStore(); // TODO: セレクタを最適化する
+  } = useSynthStore(); // TODO: セレクタを最適化したい
 
   // カットオフ周波数を対数的に表示/操作するためのヘルパー (オプション)
   const getLogValue = (value: number) => Math.log10(value);
@@ -14,6 +14,7 @@ export default function FilterSection() {
   return (
     <Grid size={{ xs:12, md:6, lg:3}}> {/* lg={3} で 4列レイアウトに対応 */}
       <Paper elevation={2} sx={{ p: 2, height: '100%', display: 'flex', flexDirection: 'column' }}>
+        {/* TODO: Filterのタイプを選べるように */}
         <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
           Filter
         </Typography>
@@ -57,7 +58,6 @@ export default function FilterSection() {
               valueLabelDisplay="auto"
             />
           </Box>
-          {/* TODO: Filter Type Select */}
         </Stack>
       </Paper>
     </Grid>

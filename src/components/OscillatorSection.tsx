@@ -30,7 +30,7 @@ export default function OscillatorSection() {
         <Stack
           spacing={2}
           divider={<Divider flexItem />}
-          sx={{ flexGrow: 1, overflowY: "auto" }}
+          sx={{ flexGrow: 1 }}
         >
           {" "}
           {/* オシレーターが増えた時用にスクロール */}
@@ -48,7 +48,6 @@ export default function OscillatorSection() {
                     <FormControl fullWidth size="small">
                       {/* InputLabelは常に表示されるように variant="standard" or shrink */}
                       <InputLabel
-                        id={`osc-type-label-${oscSettings.id}`}
                         shrink={false}
                         sx={{
                           position: "static",
@@ -57,7 +56,6 @@ export default function OscillatorSection() {
                           fontSize: "0.8rem",
                         }}
                       >
-                        Type
                       </InputLabel>
                       <Select
                         labelId={`osc-type-label-${oscSettings.id}`}
@@ -83,7 +81,6 @@ export default function OscillatorSection() {
                   <Grid size={{ xs: 12 }}>
                     <Typography
                       variant="caption"
-                      id={`osc-gain-label-${oscSettings.id}`}
                     >
                       Level: {(oscSettings.gain * 100).toFixed(0)}%
                     </Typography>
@@ -96,17 +93,14 @@ export default function OscillatorSection() {
                         setOscillatorGain(oscSettings.id, value as number)
                       }
                       size="small"
-                      aria-labelledby={`osc-gain-label-${oscSettings.id}`}
-                      valueLabelDisplay="auto"
-                      valueLabelFormat={(v) => `${(v * 100).toFixed(0)}%`}
                     />
                   </Grid>
                 </Stack>
-                {/* TODO: Add Octave, Fine Tune controls? */}
+                {/* TODO: オクターブと */}
               </Grid>
             </Box>
           ))}
-          {/* TODO: Add Oscillator Button? */}
+          {/* TODO: オシレーターさらに追加できるようにする？ */}
         </Stack>
       </Paper>
     </Grid>

@@ -42,6 +42,8 @@ interface SynthState {
   lfoEnvAmount: number;
   lfoType: OscillatorType;
 
+  // MaseterGain
+
   setVoicingType: (voicingType: VoicingType) => void;
   setOscillatorType: (id: number, oscType: OscillatorType) => void;
   setOscillatorGain: (id: number, value: number) => void;
@@ -56,7 +58,7 @@ interface SynthState {
   setEnvSustain: (value: number) => void;
   setEnvRelease: (value: number) => void;
 
-  setLFOType: (type:OscillatorType) => void;
+  setLFOType: (type: OscillatorType) => void;
   setLFOFreq: (value: number) => void;
   setLFOEnvAmount: (value: number) => void;
 }
@@ -66,7 +68,7 @@ const initialOscillators: OscillatorSettings[] = [
   { id: 2, enabled: true, gain: 0.5, type: "sine", octaveOffset: 0, detune: 0 },
 ];
 export const useSynthStore = create<SynthState>((set) => ({
-  voicing: "mono",
+  voicing: "poly",
   oscillators: initialOscillators,
   filterCutoff: 400,
   filterResonance: 1,
@@ -98,8 +100,8 @@ export const useSynthStore = create<SynthState>((set) => ({
   setEnvDecay: (value) => set({ envDecay: value }),
   setEnvSustain: (value) => set({ envSustain: value }),
   setEnvRelease: (value) => set({ envRelease: value }),
-  setLFOType: (type) => set({ lfoType:type }),
+  setLFOType: (type) => set({ lfoType: type }),
 
-  setLFOFreq: (value) => set({ lfoFreq:value}),
-  setLFOEnvAmount: (value) => set({lfoEnvAmount:value}),
+  setLFOFreq: (value) => set({ lfoFreq: value }),
+  setLFOEnvAmount: (value) => set({ lfoEnvAmount: value }),
 }));

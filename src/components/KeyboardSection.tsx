@@ -23,19 +23,19 @@ export default function KeyboardSection() {
   const {noteHold, noteRelease} = useAudioEngine()
   return (
     <Grid size={12}>
-    {Object.entries(noteFrequencies).map(([noteName, notefreq]) => {
+    {Object.entries(noteFrequencies).map(([noteName, midiNote]) => {
       return (
         
           <Button key={noteName}
-            onMouseDown={() => noteHold(notefreq)}
-            onMouseUp={noteRelease}
+            onMouseDown={() => noteHold(midiNote)}
+            onMouseUp={() => noteRelease(midiNote)}
           >
             {noteName}
           </Button>
         
       );
     })}
-    <Button onMouseDown={() => noteHold(440)} onMouseUp={noteRelease}>
+    <Button onMouseDown={() => noteHold(69)} onMouseUp={() => noteRelease(69)}>
       Hold to play note
     </Button>
   </Grid>
