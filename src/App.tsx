@@ -1,242 +1,54 @@
-import {
-  Box,
-  Button,
-  Container,
-  FormControl,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Paper,
-  Select,
-  Slider,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Container, Grid, Typography } from "@mui/material"; // Box, Typography をインポート
 import "./App.css";
-import { useEffect, useState } from "react";
-import { useSynthStore, VoicingType } from "./store/synthstore";
-import { useAudioEngine } from "./useAudioEngine";
-
-const noteFrequencies = {
-  C4: 261.63,
-  D4: 293.66,
-  E4: 329.63,
-  F4: 349.23,
-  G4: 392.0,
-  A4: 440.0,
-  B4: 493.88,
-  C5: 523.25,
-};
-// const keys = [
-//   "keyC",
-//   "keyD",
-//   "keyE",
-//   "keyF",
-//   "keyG",
-//   "keyA",
-//   "keyB",
-// ]
+// import { useAudioEngine } from "./useAudioEngine"; // 必要ならコメント解除
+import OscillatorSection from "./components/OscillatorSection";
+import FilterSection from "./components/FilterSection";
+import AmpSection from "./components/AmpSection";
+import LFOSection from "./components/LFOSection"; // LFOSectionも同様に修正が必要
+import KeyboardSection from "./components/KeyboardSection"; // KeyboardSectionも同様に修正が必要
+// import { PresetManager } from "./components/PresetManager"; // PresetManagerも同様に修正が必要
+// import InitializationButton from "./components/InitializationButton"; // 必要ならコメント解除
+// import VoicingControl from "./components/VoicingControl"; // 必要なら作成・コメント解除
 
 function App() {
-  const { initializeAudioContext, noteHold, noteRelease } = useAudioEngine();
-  const [isInitialized, setIsInitialized] = useState(false);
-  const handleInitialize = () => {
-    if (isInitialized) {
-      return;
-    }
-    initializeAudioContext();
-    setIsInitialized(true);
-  };
-  useEffect(() => {
-    return;
-  }, []);
-  const {
-    voicing,
-    oscillators,
-    filterCutoff,
-    filterResonance,
-    envAttack,
-    envDecay,
-    envSustain,
-    envRelease,
-    setVoicingType,
-    setOscillatorType,
-    setOscillatorGain,
-    setFilterCutoff,
-    setFilterResonance,
-    setEnvAttack,
-    setEnvDecay,
-    setEnvRelease,
-    setEnvSustain,
-  } = useSynthStore();
+  // const { initializeAudioContext } = useAudioEngine(); // 必要に応じて
+  // const [isInitialized, setIsInitialized] = useState(false); // 必要に応じて
+  // const handleInitialize = () => { ... }; // 必要に応じて
 
-  // useEffect(() => {
-  //   document.addEventListener("keydown", (e) => {
-  //     const key = keys.find((element) => element == e.code)
-  //     if(key != null)
-  //     {}
-  //   })
-  // }, [])
   return (
-    <Container maxWidth="lg" sx={{ mb: 4}}>
-      <Paper sx={{ p: 2, mt: 2 }}>
-        <Grid container>
-          <Grid size={12}>
-            <Button onClick={handleInitialize}>Initialize Audio Engine</Button>
-            <Select
-              value={voicing}
-              onChange={(e) => setVoicingType(e.target.value as VoicingType)}
-            >
-              <MenuItem value="mono">Monophonic</MenuItem>
-              <MenuItem value="poly">Polyphonic</MenuItem>
-            </Select>
+    // ContainerのmaxWidthを調整 (xl など広めにするかはお好みで)
+    <Container maxWidth="xl" sx={{ py: 4 }}> {/* 上下にpaddingを追加 */}
+        <Typography variant="h3" component="h1" align="center" gutterBottom sx={{ fontWeight: 700, color: 'primary.main', mb: 4}}>
+             Web Synthesizer
+        </Typography>
+
+      {/* TODO: Add Initialization Button and Voicing controls here if needed */}
+      {/* <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+           <InitializationButton isInitialized={isInitialized} onInitialize={handleInitialize} />
+           <VoicingControl />
+         </Box>
+      */}
+
+      {/* シンセコントロールセクション */}
+      {/* spacingを調整 */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        {/* 各セクションコンポーネントを配置 */}
+        <OscillatorSection />
+        <FilterSection />
+        <AmpSection />
+        <LFOSection /> {/* このコンポーネントも同様のスタイル修正が必要 */}
+      </Grid>
+
+      {/* プリセットマネージャーとキーボードセクション */}
+      <Grid container spacing={3}>
+          <Grid size={{ xs:12, md:5, lg:4}}> {/* PresetManager用のGrid */}
+             {/*  <PresetManager /> このコンポーネントも同様のスタイル修正が必要 */}
           </Grid>
-
-          {/* Synth Control Section */}
-          <Grid container size={12} spacing={4} >
-            {/* Oscillator Section */}
-            <Grid size={{md:4}}>
-              <Stack spacing={3}>
-                {oscillators.map((oscSettings) => {
-                  return (
-                    <Box key={oscSettings.id}>
-                      <Typography>Oscillator {oscSettings.id}</Typography>
-                      <Grid container spacing={2}>
-                        <Grid size={5}>
-                        <FormControl fullWidth size="small">
-                                <InputLabel id={`osc-type-label-${oscSettings.id}`}>Type</InputLabel>
-                                <Select
-                                labelId={`osc-type-label-${oscSettings.id}`}
-                                value={oscSettings.type}
-                                label="Type"
-                                onChange={(e) => setOscillatorType(oscSettings.id, e.target.value as OscillatorType)}
-                                >
-                                <MenuItem value="sine">Sine</MenuItem>
-                                <MenuItem value="square">Square</MenuItem>
-                                <MenuItem value="sawtooth">Sawtooth</MenuItem>
-                                <MenuItem value="triangle">Triangle</MenuItem>
-                                {/* TODO: Add more types? Noise? */}
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                        <Grid size={7}>
-                          <Slider
-                            min={0}
-                            max={1.0}
-                            step={0.01}
-                            value={oscSettings.gain}
-                            onChange={(_, value) =>
-                              setOscillatorGain(oscSettings.id, value)
-                            }
-                            size="small"
-                          />
-                        </Grid>
-                      </Grid>
-                    </Box>
-                  );
-                })}
-              </Stack>
-            </Grid>
-
-            {/* Filter Section */}
-            <Grid size={{md:3}}>
-              <Typography>Cutoff:{filterCutoff}</Typography>
-              <Box>
-                <Slider
-                  min={20}
-                  max={20000}
-                  value={filterCutoff}
-                  onChange={(_, newValue) => setFilterCutoff(newValue)}
-                  size="small"
-                />
-              <Typography>Q:{filterResonance}</Typography>
-
-                <Slider
-                  min={0.1}
-                  max={100}
-                  step={0.1}
-                  value={filterResonance}
-                  onChange={(_, newValue) => setFilterResonance(newValue)}
-                  size="small"
-                />
-              </Box>
-            </Grid>
-
-            {/* Amp Section */}
-            <Grid size={{md:5}}>
-              <Typography>ADSR</Typography>
-              <Grid container spacing={2}>
-                <Grid size={{md:6}}>
-                  <Typography>Attack: {envAttack}</Typography>
-                  <Slider
-                    value={envAttack}
-                    onChange={(_, value) => setEnvAttack(value)}
-                    min={0.01}
-                    max={10.0}
-                    step={0.1}
-                    size="small"
-                  />
-                </Grid>
-                <Grid size={{md:6}}>
-                  <Typography>Decay:{envDecay}</Typography>
-                  <Slider
-                    value={envDecay}
-                    onChange={(_, value) => setEnvDecay(value)}
-                    min={0}
-                    max={10}
-                    step={0.1}
-                    size="small"
-
-                  />
-                </Grid>
-                <Grid size={{md:6}}>
-                  <Typography>Sustain:{envSustain}</Typography>
-                  <Slider
-                    value={envSustain}
-                    onChange={(_, value) => setEnvSustain(value)}
-                    min={0.0}
-                    max={1.0}
-                    step={0.01}
-                    size="small"
-
-                  />
-                </Grid>
-                <Grid size={{md:6}}>
-                  <Typography>Release:{envRelease}</Typography>
-                  <Slider
-                    value={envRelease}
-                    onChange={(_, value) => setEnvRelease(value)}
-                    min={0}
-                    max={10}
-                    step={0.1}
-                    size="small"
-
-                  />
-                </Grid>
-              </Grid>
-            </Grid>
+          <Grid size={{ xs:12, md:5, lg:4}}> {/* Keyboard用のGrid */}
+             <KeyboardSection/> {/* このコンポーネントも同様のスタイル修正が必要 */}
           </Grid>
+      </Grid>
 
-          {/* keyboard section */}
-          <Grid size={12}>
-            {Object.entries(noteFrequencies).map(([noteName, notefreq]) => {
-              return (
-                
-                  <Button key={noteName}
-                    onMouseDown={() => noteHold(notefreq)}
-                    onMouseUp={noteRelease}
-                  >
-                    {noteName}
-                  </Button>
-                
-              );
-            })}
-            <Button onMouseDown={() => noteHold(440)} onMouseUp={noteRelease}>
-              Hold to play note
-            </Button>
-          </Grid>
-        </Grid>
-      </Paper>
     </Container>
   );
 }
