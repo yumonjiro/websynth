@@ -15,7 +15,7 @@ export const useAudioEngine = () => {
   //const filterGainRef = useRef<GainNode | null>(null);
 
   const lfoNodeRef = useRef<OscillatorNode | null>(null);
-  const lfoGainRef = useRef<GainNode | null>(null);
+  const filterLFOGainRef = useRef<GainNode | null>(null);
   const {
     oscillators,
     filterCutoff,
@@ -45,9 +45,11 @@ export const useAudioEngine = () => {
     masterGainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
     //フィルターの初期化
     const filter = audioContext.createBiquadFilter();
+    filter.type = "lowpass";
     filter.frequency.setValueAtTime(filterCutoff, audioContext.currentTime);
     filter.Q.setValueAtTime(filterResonance, audioContext.currentTime);
     filterNodeRef.current = filter;
+    
 
     //LFOの初期化
     const lfo = audioContext.createOscillator();
@@ -55,11 +57,12 @@ export const useAudioEngine = () => {
     lfo.frequency.setValueAtTime(lfoFreq, audioContext.currentTime);
 
     lfoNodeRef.current = lfo;
-    lfoGainRef.current = audioContext.createGain();
-    lfoGainRef.current.gain.setValueAtTime(1, audioContext.currentTime)
 
-    lfo.connect(lfoGainRef.current);
-    lfoGainRef.current.connect(filter);
+    filterLFOGainRef.current = audioContext.createGain();
+    filterLFOGainRef.current.gain.setValueAtTime(filterLFOAmount, audioContext.currentTime)
+
+    lfo.connect(filterLFOGainRef.current);
+    filterLFOGainRef.current.connect(filter.frequency);
 
     isInitialized.current = true;
 
@@ -72,7 +75,7 @@ export const useAudioEngine = () => {
   }, [filterCutoff, filterResonance, lfoFreq, lfoType]);
 
   useEffect(() => {
-    if (audioContext && filterNodeRef.current) {
+    if (audioContext && filterNodeRef.current && filterLFOGainRef.current) {
       filterNodeRef.current.frequency.setValueAtTime(
         filterCutoff,
         audioContext.currentTime
@@ -81,6 +84,7 @@ export const useAudioEngine = () => {
         filterResonance,
         audioContext.currentTime
       );
+      filterLFOGainRef.current.gain.setValueAtTime(filterLFOAmount, audioContext.currentTime);
       console.debug(
         `new filterCutoff: ${filterCutoff} \n new filter Q: ${filterResonance}`
       );
@@ -166,7 +170,7 @@ export const useAudioEngine = () => {
   );
 
   const noteRelease = useCallback(() => {
-    if (!isPlaying.current) {
+    if (!isPlaying.current ) {
       return;
     }
     if (!masterGainNodeRef.current || !audioContext) {

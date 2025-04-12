@@ -50,6 +50,7 @@ interface SynthState {
   setFilterCutoff: (value: number) => void;
   setFilterResonance: (value: number) => void;
   setFilterLFOAmount: (value: number) => void;
+
   setEnvAttack: (value: number) => void;
   setEnvDecay: (value: number) => void;
   setEnvSustain: (value: number) => void;
@@ -69,7 +70,7 @@ export const useSynthStore = create<SynthState>((set) => ({
   oscillators: initialOscillators,
   filterCutoff: 400,
   filterResonance: 1,
-  filterLFOAmount: 0,
+  filterLFOAmount: 100,
   envAttack: 0.01,
   envDecay: 0.5,
   envSustain: 0.9,

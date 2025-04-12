@@ -49,7 +49,7 @@ export default function FilterSection() {
           <Box>
             <Typography variant="caption" id="filter-resonance-label">LFO Amount: {filterLFOAmount.toFixed(1)}</Typography>
             <Slider
-              min={0.1} max={30} step={0.1} // Q値の範囲を調整 (30くらいでもかなり強烈)
+              min={-500} max={500} step={0.1} // Q値の範囲を調整 (30くらいでもかなり強烈)
               value={filterLFOAmount}
               onChange={(_, newValue) => setFilterLFOAmount(newValue)}
               size="small"
