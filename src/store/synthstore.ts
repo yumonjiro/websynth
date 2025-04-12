@@ -67,7 +67,7 @@ const initialOscillators: OscillatorSettings[] = [
 export const useSynthStore = create<SynthState>((set) => ({
   voicing: "mono",
   oscillators: initialOscillators,
-  filterCutoff: 5000,
+  filterCutoff: 400,
   filterResonance: 1,
   filterLFOAmount: 0,
   envAttack: 0.01,
