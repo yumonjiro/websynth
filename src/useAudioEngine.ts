@@ -2,7 +2,15 @@ import { useCallback, useEffect, useRef } from "react";
 import { useSynthStore } from "./store/synthstore";
 
 let audioContext: AudioContext | null = null;
+
+// MIDIノート番号を周波数に変換。a_n/a_n-1 = 2^(1/12)
+const midiNoteToFrequency = (midiNote: number) => {
+  const semitone = midiNote-69;
+  return 440*Math.pow(2, semitone/12)
+}
+
 export const useAudioEngine = () => {
+  
   const masterGainNodeRef = useRef<GainNode | null>(null);
   const isInitialized = useRef<boolean>(false);
   const isPlaying = useRef<boolean>(false);
@@ -106,7 +114,7 @@ export const useAudioEngine = () => {
   }, [lfoFreq, lfoType]);
 
   const noteHold = useCallback(
-    (freq: number) => {
+    (midiNote: number) => {
       if (!isInitialized.current) {
         initializeAudioContext();
       }
@@ -132,7 +140,8 @@ export const useAudioEngine = () => {
         )
           return;
         const now = audioContext.currentTime;
-        const frequency = freq * Math.pow(2, oscSettings.octaveOffset);
+        const frequency = midiNoteToFrequency(midiNote) * Math.pow(2, oscSettings.octaveOffset);
+        // const frequency = freq * Math.pow(2, oscSettings.octaveOffset);
         const osc = audioContext.createOscillator();
         osc.frequency.setValueAtTime(frequency, now);
         osc.type = oscSettings.type;
