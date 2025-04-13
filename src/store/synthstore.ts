@@ -16,12 +16,7 @@ interface OscillatorSettings {
 }
 export type VoicingType = "mono" | "poly";
 
-interface SynthState {
-  /*
-    必要な状態：
-    oscillatorType(waveFormのこと。WebAudioAPIの方の命名に準拠)
-    octave
-    */
+export interface SynthSettings {
   voicing: VoicingType;
   //OSC
   oscillators: OscillatorSettings[];
@@ -41,9 +36,9 @@ interface SynthState {
   lfoFreq: number;
   lfoEnvAmount: number;
   lfoType: OscillatorType;
+}
 
-  // MaseterGain
-
+interface SynthState extends SynthSettings {
   setVoicingType: (voicingType: VoicingType) => void;
   setOscillatorType: (id: number, oscType: OscillatorType) => void;
   setOscillatorGain: (id: number, value: number) => void;
@@ -61,13 +56,15 @@ interface SynthState {
   setLFOType: (type: OscillatorType) => void;
   setLFOFreq: (value: number) => void;
   setLFOEnvAmount: (value: number) => void;
+  loadPresetSettings: (setting: SynthSettings) => void;
 }
 
 const initialOscillators: OscillatorSettings[] = [
   { id: 1, enabled: true, gain: 0.5, type: "sine", octaveOffset: 0, detune: 0 },
   { id: 2, enabled: true, gain: 0.5, type: "sine", octaveOffset: 0, detune: 0 },
 ];
-export const useSynthStore = create<SynthState>((set) => ({
+
+export const defaultSetings: SynthSettings = {
   voicing: "poly",
   oscillators: initialOscillators,
   filterCutoff: 400,
@@ -80,6 +77,10 @@ export const useSynthStore = create<SynthState>((set) => ({
   lfoType: "triangle",
   lfoFreq: 1,
   lfoEnvAmount: 0,
+};
+export const useSynthStore = create<SynthState>((set) => ({
+  ...defaultSetings,
+
   setVoicingType: (voicingType) => set({ voicing: voicingType }),
   setOscillatorType: (id, oscType) =>
     set((state) => ({
@@ -104,4 +105,37 @@ export const useSynthStore = create<SynthState>((set) => ({
 
   setLFOFreq: (value) => set({ lfoFreq: value }),
   setLFOEnvAmount: (value) => set({ lfoEnvAmount: value }),
+  loadPresetSettings: (settings) => set(settings),
 }));
+
+export const getSettingsFromState = (state: SynthState) => {
+  const {
+    voicing,
+    oscillators,
+    filterCutoff,
+    filterResonance,
+    filterLFOAmount,
+    envAttack,
+    envDecay,
+    envSustain,
+    envRelease,
+    lfoType,
+    lfoFreq,
+    lfoEnvAmount,
+  } = state;
+  const settings: SynthSettings = {
+    voicing,
+    oscillators,
+    filterCutoff,
+    filterResonance,
+    filterLFOAmount,
+    envAttack,
+    envDecay,
+    envSustain,
+    envRelease,
+    lfoType,
+    lfoFreq,
+    lfoEnvAmount,
+  };
+  return settings;
+};

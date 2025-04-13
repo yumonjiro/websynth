@@ -241,6 +241,7 @@ export const useAudioEngine = () => {
           newOscs.push(osc);
           newOscGains.push(oscGain);
         });
+
         const newNodes: ActiveNoteNodes = {
           id: nanoid(10),
           oscillators: newOscs,
@@ -312,29 +313,29 @@ export const useAudioEngine = () => {
     },
     [envRelease]
   );
-  const forceNoteRelease = useCallback(
-    // forceNotereleaseは、基本的にsetTimeoutがコールされている状態で呼ばれる。
-    (midiNote: number) => {
-      if (!masterGainNodeRef.current || !audioContext) {
-        return;
-      }
+  // const forceNoteRelease = useCallback(
+  //   // forceNotereleaseは、基本的にsetTimeoutがコールされている状態で呼ばれる。
+  //   (midiNote: number) => {
+  //     if (!masterGainNodeRef.current || !audioContext) {
+  //       return;
+  //     }
 
-      const activeNotes = activeNoteRef.current;
-      // nodesへの参照は、setTimeout内とここで２つある。
-      const nodes = activeNotes.get(midiNote);
-      if (nodes) {
-        nodes.envelopeGain.gain.cancelScheduledValues(0);
-        nodes.oscillators.forEach((osc) => {
-          osc.stop();
-        });
-        nodes.oscillators.forEach((osc) => osc.disconnect());
-        nodes.envelopeGain.disconnect();
-        nodes.oscGains.forEach((gain) => gain.disconnect());
-        activeNoteRef.current.delete(midiNote);
-        console.log(`active notes:${activeNoteRef.current.size}`);
-      }
-    },
-    [envRelease]
-  );
+  //     const activeNotes = activeNoteRef.current;
+  //     // nodesへの参照は、setTimeout内とここで２つある。
+  //     const nodes = activeNotes.get(midiNote);
+  //     if (nodes) {
+  //       nodes.envelopeGain.gain.cancelScheduledValues(0);
+  //       nodes.oscillators.forEach((osc) => {
+  //         osc.stop();
+  //       });
+  //       nodes.oscillators.forEach((osc) => osc.disconnect());
+  //       nodes.envelopeGain.disconnect();
+  //       nodes.oscGains.forEach((gain) => gain.disconnect());
+  //       activeNoteRef.current.delete(midiNote);
+  //       console.log(`active notes:${activeNoteRef.current.size}`);
+  //     }
+  //   },
+  //   [envRelease]
+  // );
   return { initializeAudioContext, noteHold, noteRelease };
 };
