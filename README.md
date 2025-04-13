@@ -4,6 +4,7 @@
 - シンプルな減算合成方式のシンセサイザー
 - プリセットをDBに保存して、読み込めるようにする
 
+[フロントエンド](frontend/memo.md)
 ## 参考  
 * [What is subtractive synthesis? Native Instruments](https://blog.native-instruments.com/subtractive-synthesis/)  
 * [減算合成の仕組み Apple](https://support.apple.com/ja-jp/guide/logicpro/lgsife41a22f/11.1/mac/14.6) ←とりあえずこの通りに実装してみたい

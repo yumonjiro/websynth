@@ -8,7 +8,7 @@ interface OscillatorSettings {
   //
   enabled: boolean;
   //
-  type: OscillatorType;
+  oscillatorType: OscillatorType;
   // Amplitude
   gain: number;
   octaveOffset: number;
@@ -60,8 +60,8 @@ interface SynthState extends SynthSettings {
 }
 
 const initialOscillators: OscillatorSettings[] = [
-  { id: 1, enabled: true, gain: 0.5, type: "sine", octaveOffset: 0, detune: 0 },
-  { id: 2, enabled: true, gain: 0.5, type: "sine", octaveOffset: 0, detune: 0 },
+  { id: 1, enabled: true, gain: 0.5, oscillatorType: "sine", octaveOffset: 0, detune: 0 },
+  { id: 2, enabled: true, gain: 0.5, oscillatorType: "sine", octaveOffset: 0, detune: 0 },
 ];
 
 export const defaultSetings: SynthSettings = {

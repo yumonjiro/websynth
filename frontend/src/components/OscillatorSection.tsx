@@ -60,7 +60,7 @@ export default function OscillatorSection() {
                       <Select
                         labelId={`osc-type-label-${oscSettings.id}`}
                         // label="Type" // labelを使うとスペース取るのでInputLabelを外に出す
-                        value={oscSettings.type}
+                        value={oscSettings.oscillatorType}
                         onChange={(e) =>
                           setOscillatorType(
                             oscSettings.id,

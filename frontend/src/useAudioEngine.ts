@@ -164,7 +164,7 @@ export const useAudioEngine = () => {
           // const frequency = freq * Math.pow(2, oscSettings.octaveOffset);
           const osc = audioContext.createOscillator();
           osc.frequency.setValueAtTime(frequency, now);
-          osc.type = oscSettings.type;
+          osc.type = oscSettings.oscillatorType;
           const gainNode = audioContext.createGain();
           gainNode.gain.setValueAtTime(oscSettings.gain, now);
 
@@ -233,7 +233,7 @@ export const useAudioEngine = () => {
             Math.pow(2, oscSettings.octaveOffset);
           const osc = audioContext.createOscillator();
           osc.frequency.setValueAtTime(frequency, now);
-          osc.type = oscSettings.type;
+          osc.type = oscSettings.oscillatorType;
           const oscGain = audioContext.createGain();
           oscGain.gain.setValueAtTime(oscSettings.gain, now);
           osc.connect(oscGain);
