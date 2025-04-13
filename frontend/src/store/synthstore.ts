@@ -85,7 +85,7 @@ export const useSynthStore = create<SynthState>((set) => ({
   setOscillatorType: (id, oscType) =>
     set((state) => ({
       oscillators: state.oscillators.map((osc) =>
-        osc.id === id ? { ...osc, type: oscType } : osc
+        osc.id === id ? { ...osc, oscillatorType: oscType } : osc
       ),
     })),
   setOscillatorGain: (id, value) =>

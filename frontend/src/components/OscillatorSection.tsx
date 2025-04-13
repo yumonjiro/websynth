@@ -65,8 +65,8 @@ export default function OscillatorSection() {
                           setOscillatorType(
                             oscSettings.id,
                             e.target.value as OscillatorType
-                          )
-                        }
+                        )}
+                        
                         // variant="outlined" // デフォルト
                       >
                         <MenuItem value="sine">Sine</MenuItem>
