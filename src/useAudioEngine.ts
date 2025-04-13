@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useSynthStore } from "./store/synthstore";
-
+import { nanoid } from "nanoid";
 let audioContext: AudioContext | null = null;
 
 // MIDIノート番号を周波数に変換。a_n/a_n-1 = 2^(1/12)
@@ -10,6 +10,7 @@ const midiNoteToFrequency = (midiNote: number) => {
 };
 
 interface ActiveNoteNodes {
+  id: string;
   oscillators: OscillatorNode[];
   oscGains: GainNode[];
   envelopeGain: GainNode;
@@ -199,7 +200,12 @@ export const useAudioEngine = () => {
         const activeNotes = activeNoteRef.current;
         //同じ音が鳴っていないか
         if (activeNotes.has(midiNote)) {
-          forceNoteRelease(midiNote);
+          //すでにsetTimeoutは呼ばれているので、
+          const nodes = activeNotes.get(midiNote)
+          if(nodes) {
+            nodes.envelopeGain.gain.cancelScheduledValues(0);
+            nodes.envelopeGain.gain.setValueAtTime(0, audioContext.currentTime);
+          }
         }
         // //発音数確認
         // if (activeNotes.size >= maxVoice) {
@@ -236,6 +242,7 @@ export const useAudioEngine = () => {
           newOscGains.push(oscGain);
         });
         const newNodes: ActiveNoteNodes = {
+          id: nanoid(10),
           oscillators: newOscs,
           oscGains: newOscGains,
           envelopeGain: adsrGain,
@@ -252,10 +259,12 @@ export const useAudioEngine = () => {
         newOscs.forEach((osc) => {
           osc.start();
         });
-        adsrGain.connect(filterNodeRef.current)
+        adsrGain.connect(filterNodeRef.current);
+
         activeNotes.set(midiNote, newNodes);
-        activeNoteRef.current = activeNotes;
-        isPlaying.current = true;
+
+        //activeNoteRef.current = activeNotes;
+        // isPlaying.current = true;
       }
     },
     [oscillators, initializeAudioContext, envAttack, envDecay, envSustain]
@@ -263,10 +272,6 @@ export const useAudioEngine = () => {
 
   const noteRelease = useCallback(
     (midiNote: number) => {
-      if (!isPlaying.current) {
-        return;
-      }
-
       if (!masterGainNodeRef.current || !audioContext) {
         return;
       }
@@ -278,18 +283,29 @@ export const useAudioEngine = () => {
       } else {
         const activeNotes = activeNoteRef.current;
         const nodes = activeNotes.get(midiNote);
+        console.log("releasing");
         if (nodes) {
+          console.log("releasing2");
+
           nodes.envelopeGain.gain.cancelScheduledValues(0);
           nodes.envelopeGain.gain.linearRampToValueAtTime(0, now + envRelease);
           const stopTime = now + envRelease + 0.1;
           nodes.oscillators.forEach((osc) => {
             osc.stop(stopTime);
           });
+          const nodesId = nodes.id;
           setTimeout(() => {
+            //このNodesって、
             nodes.oscillators.forEach((osc) => osc.disconnect());
             nodes.envelopeGain.disconnect();
             nodes.oscGains.forEach((gain) => gain.disconnect());
-            activeNoteRef.current.delete(midiNote);
+            //activeNoteRefからの参照外れてなければデリートしとく
+            if (
+              activeNotes.has(midiNote) &&
+              activeNotes.get(midiNote)?.id == nodesId
+            ) {
+              activeNoteRef.current.delete(midiNote);
+            }
           }, (stopTime - now) * 1000);
         }
       }
@@ -297,16 +313,14 @@ export const useAudioEngine = () => {
     [envRelease]
   );
   const forceNoteRelease = useCallback(
+    // forceNotereleaseは、基本的にsetTimeoutがコールされている状態で呼ばれる。
     (midiNote: number) => {
-      if (!isPlaying.current) {
-        return;
-      }
-
       if (!masterGainNodeRef.current || !audioContext) {
         return;
       }
 
       const activeNotes = activeNoteRef.current;
+      // nodesへの参照は、setTimeout内とここで２つある。
       const nodes = activeNotes.get(midiNote);
       if (nodes) {
         nodes.envelopeGain.gain.cancelScheduledValues(0);
@@ -317,6 +331,7 @@ export const useAudioEngine = () => {
         nodes.envelopeGain.disconnect();
         nodes.oscGains.forEach((gain) => gain.disconnect());
         activeNoteRef.current.delete(midiNote);
+        console.log(`active notes:${activeNoteRef.current.size}`);
       }
     },
     [envRelease]
