@@ -35,7 +35,7 @@ export const useAudioEngine = () => {
   const lfoNodeRef = useRef<OscillatorNode | null>(null);
   const filterLFOGainRef = useRef<GainNode | null>(null);
   const {
-    voicing,
+    voicingType,
     oscillators,
     filterCutoff,
     filterResonance,
@@ -142,7 +142,7 @@ export const useAudioEngine = () => {
       }
 
       // モノフォニックかポリフォニックかで分岐
-      if (voicing == "mono") {
+      if (voicingType == "mono") {
         if (activeOscillatorNodes.current.size > 0) {
           activeOscillatorNodes.current.forEach((osc) => {
             osc.stop();
@@ -277,7 +277,7 @@ export const useAudioEngine = () => {
         return;
       }
       const now = audioContext.currentTime;
-      if (voicing == "mono") {
+      if (voicingType == "mono") {
         const gainNode = masterGainNodeRef.current;
         gainNode.gain.cancelScheduledValues(0);
         gainNode.gain.linearRampToValueAtTime(0, now + envRelease);

@@ -1,52 +1,15 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 class Preset
-{
-  private static OscillatorSettings initOsc1 = new OscillatorSettings
-  {
-    Id = 1,
-    OscillatorType = "sine",
-    Gain = 0.5f,
-    Detune = 0.0f,
-    Enabled = true,
-  };
-  private static OscillatorSettings initOsc2 = new OscillatorSettings
-  {
-    Id = 2,
-    OscillatorType = "sine",
-    Gain = 0.5f,
-    Detune = 0.0f,
-    Enabled = true,
-  };
-
-  private static SynthSettings initSynth = new SynthSettings
-  {
-    VoicingType = "poly",
-    Oscillators = [initOsc1, initOsc2],
-    FilterCutoff = 500f,
-    FilterResonance = 1f,
-    FilterLFOAmount = 100f,
-    EnvAttack = 0.2f,
-    EnvDecay = 0.3f,
-    EnvSustain = 0.85f,
-    EnvRelease = 1.0f,
-    LFOFreq = 1.0f,
-    LfoType = "sine",
-    LfoEnvAmount = 0f
-  };
-  public static readonly Preset init = new Preset
-  {
-    Id = 1,
-    Name = "init",
-    SynthSettings = initSynth
-  };
-
+{ 
   public int Id { get; set; }
   public string? Name { get; set; }
-
-  public required SynthSettings SynthSettings { get; set; }
+  
+  public SynthSettings SynthSettings { get; set; }
 }
 
 enum WaveForm
@@ -58,8 +21,10 @@ enum WaveForm
 }
 class OscillatorSettings
 {
+  [JsonIgnore]
+  public SynthSettings SynthSettings {get; set;}
   public int Id { get; set; }
-  public Boolean Enabled { get; set; }
+  public bool Enabled { get; set; }
   public required string OscillatorType
   {
     get { return _OscillatorType.ToString().ToLower(); }
@@ -77,7 +42,8 @@ class OscillatorSettings
 }
 class SynthSettings
 {
-
+  [JsonIgnore]
+  public Preset Preset {get; set; }
   public required string VoicingType { get; set; }
   public required List<OscillatorSettings> Oscillators { get; set; }
   public float FilterCutoff { get; set; }

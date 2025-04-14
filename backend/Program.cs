@@ -26,6 +26,11 @@ builder.Services.AddOpenApiDocument(config =>
 });
 builder.Services.AddSwaggerGen();
 var app = builder.Build();
+
+
+var scope = app.Services.CreateScope();
+var created = scope.ServiceProvider.GetRequiredService<PresetDb>().Database.EnsureCreated();
+Console.WriteLine($"Database Created: {created}");
 if (app.Environment.IsDevelopment())
 {
 

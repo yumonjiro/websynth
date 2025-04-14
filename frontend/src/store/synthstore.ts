@@ -17,7 +17,7 @@ interface OscillatorSettings {
 export type VoicingType = "mono" | "poly";
 
 export interface SynthSettings {
-  voicing: VoicingType;
+  voicingType: VoicingType;
   //OSC
   oscillators: OscillatorSettings[];
 
@@ -65,7 +65,7 @@ const initialOscillators: OscillatorSettings[] = [
 ];
 
 export const defaultSetings: SynthSettings = {
-  voicing: "poly",
+  voicingType: "poly",
   oscillators: initialOscillators,
   filterCutoff: 400,
   filterResonance: 1,
@@ -78,10 +78,31 @@ export const defaultSetings: SynthSettings = {
   lfoFreq: 1,
   lfoEnvAmount: 0,
 };
+
+interface PresetsState {
+  Presets: Array<Preset>
+  setPresets: (presets:Array<Preset>) => void;
+}
+
+export interface Preset {
+  id?: number,
+  name: string,
+  synthSettings:SynthSettings,
+}
+
+export const usePresetStore = create<PresetsState>((set) => ({
+  Presets: [],
+
+  setPresets: (presets) => set({
+    Presets: presets
+    }),
+  })
+);
+
 export const useSynthStore = create<SynthState>((set) => ({
   ...defaultSetings,
 
-  setVoicingType: (voicingType) => set({ voicing: voicingType }),
+  setVoicingType: (voicingType) => set({ voicingType: voicingType }),
   setOscillatorType: (id, oscType) =>
     set((state) => ({
       oscillators: state.oscillators.map((osc) =>
@@ -110,7 +131,7 @@ export const useSynthStore = create<SynthState>((set) => ({
 
 export const getSettingsFromState = (state: SynthState) => {
   const {
-    voicing,
+    voicingType: voicing,
     oscillators,
     filterCutoff,
     filterResonance,
@@ -124,7 +145,7 @@ export const getSettingsFromState = (state: SynthState) => {
     lfoEnvAmount,
   } = state;
   const settings: SynthSettings = {
-    voicing,
+    voicingType: voicing,
     oscillators,
     filterCutoff,
     filterResonance,

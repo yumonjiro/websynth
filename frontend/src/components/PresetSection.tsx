@@ -1,76 +1,102 @@
 import { useCallback,useState } from "react";
 import {
-  defaultSetings,
   useSynthStore,
-  SynthSettings,
-  getSettingsFromState
+  getSettingsFromState,
+  usePresetStore,
+  Preset
 } from "../store/synthstore"; // OscillatorType をインポート
-import { Grid, Typography, Paper, Button, TextField } from "@mui/material"; // Paper, Divider を追加
+import { Grid, Typography, Paper, Button, TextField, List, ListItem, ListItemText, ListItemButton } from "@mui/material"; // Paper, Divider を追加
 
 
 const isDevMode = import.meta.env.DEV;
 
 const ServerUrl = isDevMode ? "http://localhost:5193" : "";
 
-const setPreset = (name: string, settings: SynthSettings) => {
+// const setPreset = (name: string, settings: SynthSettings) => {
+//   const preset = JSON.stringify(settings);
+//   localStorage.setItem(name, preset);
+//   console.log("Saved preset string to local strage:" + preset);
+// }
 
-  const preset = JSON.stringify(settings);
-  localStorage.setItem(name, preset);
-  console.log("Saved preset string to local strage:" + preset);
-}
-
-const loadPreset = 
-  (name: string):string | null => {
-    const presetStr = localStorage.getItem(name);
-    if (presetStr != null) {
-      return presetStr;
+// const loadPreset = 
+//   (name: string):string | null => {
+//     const presetStr = localStorage.getItem(name);
+//     if (presetStr != null) {
+//       return presetStr;
       
-    }
-    console.log("Preset not Found");
-    return null;
-  }
+//     }
+//     console.log("Preset not Found");
+//     return null;
+//   }
 export default function PresetSection() {
-  
+
   const { loadPresetSettings } = useSynthStore();
-  
-  const handleSetPreset = useCallback((name: string) => {
-    // get current settings from store
-    const settings = getSettingsFromState(useSynthStore.getState());
-    setPreset(name, settings);
-  }, []);
+  const { 
+    Presets,
+    setPresets,
+  } = usePresetStore()
+  // const [fetchedPresets, setFetchedPresets] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const handleLoadPreset = useCallback(
-    (name: string) => {
-      const presetStr = loadPreset(name);
-      if(presetStr != null) {
-        loadPresetSettings(JSON.parse(presetStr) as SynthSettings);
-      }
-    },
-    [loadPresetSettings]
-  );
-  const handleLoadpresetFromServerTest = useCallback(() => {
-     fetch(ServerUrl+ "/presets/1", {method: "GET"})
-    .then(response =>  {
-      console.log(response)
-      return response.json()}
-    )
-    .then(data => {
-      console.log(data);
-      // dataはjsonObject
-      const settings:SynthSettings = data["synthSettings"] as SynthSettings;
+  const savePresetToServer = useCallback(() => {
+    const url = ServerUrl + "/presets"
+    // const header = {method: "GET"}
+    const preset: Preset = {
+      name: searchQuery,
+      synthSettings: getSettingsFromState(useSynthStore.getState())
+    }
+    const body = JSON.stringify(preset);
+    console.log(`Posting preset: ${body}`)
+    fetch(url, {method:"POST", 
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body:body })
+    .then(response => {
+      console.log(`response: ${response.body}`)
+    })
 
-      loadPresetSettings(settings)
+    console.log(`Saved Presets To Server`);
+    // もう一度fetch
+    fetchPresetsFromServer();
+    }, [searchQuery]);
+
+    const fetchPresetsFromServer = useCallback(() => {
+      const url = ServerUrl + "/presets"
+      // const header = {method: "GET"}
+      fetch(url, {method:"GET"})
+      .then(response => {
+        console.log(`response: ${response}`)
+        return response.json();
       })
-    }, [])
+      .then(data => setPresets(data));
+      console.log("Preset downloaded");
+      }, []);
 
-  const [presetName, setPresetName] = useState("");
+  // const handleSetPreset = useCallback((name: string) => {
+  //   // get current settings from store
+  //   const settings = getSettingsFromState(useSynthStore.getState());
+  //   setPreset(name, settings);
+  // }, []);
+
+  // const handleLoadPreset = useCallback(
+  //   (name: string) => {
+  //     const presetStr = loadPreset(name);
+  //     if(presetStr != null) {
+  //       loadPresetSettings(JSON.parse(presetStr) as SynthSettings);
+  //     }
+  //   },
+  //   [loadPresetSettings]
+  // );
+
 
   // useEffect(() => {
   //   fetch(ServerUrl + "presets")
   //   return;
   // }, []);
-  
-
+  const filteredPresets = useCallback(() => {
+    return Presets.filter(preset => preset.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  }, [Presets, searchQuery])
 
   return (
     <Grid size={{ xs: 12, md: 6, lg: 3 }}>
@@ -83,16 +109,25 @@ export default function PresetSection() {
         <Typography variant="h6" gutterBottom sx={{ mb: 1 }}>
           Presets
         </Typography>
-        <Button onClick={() => loadPresetSettings(defaultSetings)}></Button>
-        <TextField
-          value={presetName}
-          onChange={(e) => setPresetName(e.target.value)}
-        />
-        <Button onClick={() => handleSetPreset(presetName)}>
-          Save
-        </Button>
-        <Button onClick={() => handleLoadPreset(presetName)}>Load</Button>
-        <Button onClick={() => handleLoadpresetFromServerTest()}>Load From Server</Button>
+        <TextField value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}></TextField>
+        <List sx={{ overflow: "scroll"}}>
+          {
+            filteredPresets().map((preset) =>  
+            (
+            <ListItem key={preset.id}>
+              <ListItemButton onClick={() => loadPresetSettings(preset.synthSettings)}>
+              <ListItemText>{preset.id}:{preset.name}</ListItemText>
+              </ListItemButton>
+            </ListItem>
+          ))
+          }
+        </List>
+        {filteredPresets().length > 0 || searchQuery.length == 0 ?
+        <Button onClick={() => fetchPresetsFromServer()}>fetch presets from Server</Button>
+          : 
+          <Button onClick={() => savePresetToServer()}>save presets To Server</Button>
+      }
+        
       </Paper>
     </Grid>
   );

@@ -90,10 +90,8 @@ UIについて
 - フロントエンド  
   - React + TypeScript + MUI + Zustand  (学習コスト低そうな組み合わせ、型指定あったほうが嬉しい)
   - 音声処理はWeb Audio APIを使用  ->　カスタムフック作ってロジックとUI分離
-  - UIデザインわからなすぎるーー
 - バックエンド  
-  - PythonかC#かjavascript
   - ASP.NETで作る。C#書きたい。
-  
-- とりあえずフロントエンドを作る。簡単な減算合成方式のシンセサイザー。
-
+  - ASP.NET + EntityFramework + SwaggerUI
+- その他
+  - スキーマのすり合わせは、Open API Generatorを使う。

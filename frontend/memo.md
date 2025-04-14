@@ -52,6 +52,8 @@ Custom Hook 内では React の組み込みの Hook が扱える(通常の関数
  参考：[state 内の配列の更新](https://ja.react.dev/learn/updating-arrays-in-state)
  書き換える系の関数は使っちゃダメ。配列はreadonly
  新しい配列を作って再代入が基本。mapとか。
+ ->違うかも。useState以外は気にしなくていい？
+ ->useStore, useRefだと結構違う。勘違い。
 
 ## 減算方式シンセサイザーの機能要件
 

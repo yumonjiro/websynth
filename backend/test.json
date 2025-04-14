@@ -1,34 +1,64 @@
-
-{
-  "id": 1,
-  "name": "init",
-  "synthSettings": {
-    "voicingType": "poly",
-    "oscillators": [
-      {
-        "id": 1,
-        "enabled": true,
-        "oscillatorType": "triangle",
-        "gain": 0.5,
-        "detune": 0
-      },
-      {
-        "id": 2,
-        "enabled": true,
-        "oscillatorType": "square",
-        "gain": 0.3,
-        "detune": 0
-      }
-    ],
-    "filterCutoff": 500,
-    "filterResonance": 1,
-    "filterLFOAmount": 50,
-    "envAttack": 0.5,
-    "envDecay": 0.5,
-    "envSustain": 0.7,
-    "envRelease": 1,
-    "lfoFreq": 1.5,
-    "lfoType": "triangle",
-    "lfoEnvAmount": 0
+[
+  {
+    "id": 1,
+    "name": "",
+    "synthSettings": {
+      "voicing": "poly",
+      "oscillators": [
+        {
+          "id": 1,
+          "enabled": true,
+          "gain": 0.5,
+          "oscillatorType": "sine",
+          "octaveOffset": 0,
+          "detune": 0
+        },
+        {
+          "id": 2,
+          "enabled": true,
+          "gain": 0.5,
+          "oscillatorType": "sine",
+          "octaveOffset": 0,
+          "detune": 0
+        }
+      ],
+      "filterCutoff": 400,
+      "filterResonance": 1,
+      "filterLFOAmount": 100,
+      "envAttack": 0.01,
+      "envDecay": 0.5,
+      "envSustain": 0.9,
+      "envRelease": 1,
+      "lfoType": "triangle",
+      "lfoFreq": 1,
+      "lfoEnvAmount": 0
+    }
+  },
+  {
+    "id": 0,
+    "name": "string",
+    "synthSettings": {
+      "voicingType": "string",
+      "oscillators": [
+        {
+          "id": 0,
+          "enabled": true,
+          "oscillatorType": "string",
+          "gain": 0,
+          "detune": 0,
+          "octaveOffset": 0
+        }
+      ],
+      "filterCutoff": 0,
+      "filterResonance": 0,
+      "filterLFOAmount": 0,
+      "envAttack": 0,
+      "envDecay": 0,
+      "envSustain": 0,
+      "envRelease": 0,
+      "lfoFreq": 0,
+      "lfoType": "string",
+      "lfoEnvAmount": 0
+    }
   }
-}
+]
