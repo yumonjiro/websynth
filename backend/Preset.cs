@@ -73,6 +73,7 @@ class OscillatorSettings
 
   public float Gain { get; set; }
   public float Detune { get; set; }
+  public int OctaveOffset {get; set;}
 }
 class SynthSettings
 {
