@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameWorkCore.InMemory" Version="9.0.4" />
     <PackageReference Include="NSwag.AspNetCore" Version="14.3.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.1" />
   </ItemGroup>
 
 </Project>

@@ -1,14 +1,10 @@
 
 dotnet add package Microsoft.EntityFrameworkCore.InMemory
     - データベース機能
-dotnet add package Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore
-    - 何に使うんだこれ
-
-
-
-
 dotnet add package NSwag.AspNetCore  
     - swagger UI表示のため。
+dotnet add package Swashbuckle.AspNetCore
+    - SwaggerUIでOpen APi Specificationを自動生成
 
 ポート番号の指定は、Property/launchsettings.jsonで
 
@@ -59,3 +55,9 @@ SynthSettings.OscillatorsとOscillatorSettingsの所有関係が自明じゃな�
 
 - 手動でチェックする関数作る
     - めんどくさい
+
+- interfaceをコード生成！
+    - Open Api generator
+
+[text](https://openapi-generator.tech/docs/usage)
+[text](https://swagger.io/specification/)

@@ -1,0 +1,34 @@
+
+{
+  "id": 1,
+  "name": "init",
+  "synthSettings": {
+    "voicingType": "poly",
+    "oscillators": [
+      {
+        "id": 1,
+        "enabled": true,
+        "oscillatorType": "triangle",
+        "gain": 0.5,
+        "detune": 0
+      },
+      {
+        "id": 2,
+        "enabled": true,
+        "oscillatorType": "square",
+        "gain": 0.3,
+        "detune": 0
+      }
+    ],
+    "filterCutoff": 500,
+    "filterResonance": 1,
+    "filterLFOAmount": 50,
+    "envAttack": 0.5,
+    "envDecay": 0.5,
+    "envSustain": 0.7,
+    "envRelease": 1,
+    "lfoFreq": 1.5,
+    "lfoType": "triangle",
+    "lfoEnvAmount": 0
+  }
+}

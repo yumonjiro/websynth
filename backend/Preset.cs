@@ -49,15 +49,28 @@ class Preset
   public required SynthSettings SynthSettings { get; set; }
 }
 
+enum WaveForm
+{
+  Sine,
+  Square,
+  Sawtooth,
+  Triangle
+}
 class OscillatorSettings
 {
   public int Id { get; set; }
   public Boolean Enabled { get; set; }
   public required string OscillatorType
   {
-    get;
-    set;
+    get { return _OscillatorType.ToString().ToLower(); }
+    set
+    {
+      Enum.TryParse<WaveForm>(value, true, out WaveForm form);
+      _OscillatorType = form;
+    }
   }
+  private WaveForm _OscillatorType;
+
   public float Gain { get; set; }
   public float Detune { get; set; }
 }
@@ -74,7 +87,12 @@ class SynthSettings
   public float EnvSustain { get; set; }
   public float EnvRelease { get; set; }
   public float LFOFreq { get; set; }
-  public required string LfoType { get; set; }
+  public required string LfoType { get { return _LFOType.ToString().ToLower(); } 
+  set {
+    Enum.TryParse<WaveForm>(value, true, out WaveForm result);
+    _LFOType = result;
+  } }
+  private WaveForm _LFOType; 
   public float LfoEnvAmount { get; set; }
 }
 /*
