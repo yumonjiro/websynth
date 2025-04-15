@@ -1,12 +1,21 @@
-import { useCallback,useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   useSynthStore,
   getSettingsFromState,
   usePresetStore,
-  Preset
+  Preset,
 } from "../store/synthstore"; // OscillatorType をインポート
-import { Grid, Typography, Paper, Button, TextField, List, ListItem, ListItemText, ListItemButton } from "@mui/material"; // Paper, Divider を追加
-
+import {
+  Grid,
+  Typography,
+  Paper,
+  Button,
+  TextField,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemButton,
+} from "@mui/material"; // Paper, Divider を追加
 
 const isDevMode = import.meta.env.DEV;
 
@@ -18,84 +27,74 @@ const ServerUrl = isDevMode ? "http://localhost:5193" : "";
 //   console.log("Saved preset string to local strage:" + preset);
 // }
 
-// const loadPreset = 
+// const loadPreset =
 //   (name: string):string | null => {
 //     const presetStr = localStorage.getItem(name);
 //     if (presetStr != null) {
 //       return presetStr;
-      
+
 //     }
 //     console.log("Preset not Found");
 //     return null;
 //   }
 export default function PresetSection() {
-
   const { loadPresetSettings } = useSynthStore();
-  const { 
-    Presets,
-    setPresets,
-  } = usePresetStore()
+  const [ Presets, setPresets ] = useState<Preset[]>([]);
+  const [ filteredPresets, setFilteredPresets ] = useState<Preset[]>([]);
   // const [fetchedPresets, setFetchedPresets] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
 
   const savePresetToServer = useCallback(() => {
-    const url = ServerUrl + "/presets"
+    const url = ServerUrl + "/presets";
     // const header = {method: "GET"}
     const preset: Preset = {
       name: searchQuery,
-      synthSettings: getSettingsFromState(useSynthStore.getState())
-    }
+      synthSettings: getSettingsFromState(useSynthStore.getState()),
+    };
     const body = JSON.stringify(preset);
-    console.log(`Posting preset: ${body}`)
-    fetch(url, {method:"POST", 
+    console.log(`Posting preset: ${body}`);
+    fetch(url, {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body:body })
-    .then(response => {
-      console.log(`response: ${response.body}`)
-    })
+      body: body,
+    }).then((response) => {
+      console.log(`response: ${response.body}`);
+    });
 
     console.log(`Saved Presets To Server`);
+    //この時点でセーブは完了
     // もう一度fetch
     fetchPresetsFromServer();
-    }, [searchQuery]);
 
-    const fetchPresetsFromServer = useCallback(() => {
-      const url = ServerUrl + "/presets"
-      // const header = {method: "GET"}
-      fetch(url, {method:"GET"})
-      .then(response => {
-        console.log(`response: ${response}`)
+  }, [searchQuery]);
+
+  const fetchPresetsFromServer = useCallback(() => {
+    const url = ServerUrl + "/presets";
+    fetch(url, { method: "GET" })
+      .then((response) => {
+        console.log(`response: ${response}`);
         return response.json();
       })
-      .then(data => setPresets(data));
-      console.log("Preset downloaded");
-      }, []);
+      .then((data) => setPresets(data));
+    console.log("Preset downloaded");
+  }, []);
 
-  // const handleSetPreset = useCallback((name: string) => {
-  //   // get current settings from store
-  //   const settings = getSettingsFromState(useSynthStore.getState());
-  //   setPreset(name, settings);
-  // }, []);
+  const requestDeletePreset = useCallback((id:number | undefined) => {
+    if (!id) {
+      console.log("Invalid Preset Id");
+      return;
+    }
+    const url = ServerUrl + "/" + id.toString();
+    fetch(url, { method:"DELETE",})
+    .then((response) => 
+      console.log(response.body))
+    fetchPresetsFromServer();
+  }, [fetchPresetsFromServer])
 
-  // const handleLoadPreset = useCallback(
-  //   (name: string) => {
-  //     const presetStr = loadPreset(name);
-  //     if(presetStr != null) {
-  //       loadPresetSettings(JSON.parse(presetStr) as SynthSettings);
-  //     }
-  //   },
-  //   [loadPresetSettings]
-  // );
-
-
-  // useEffect(() => {
-  //   fetch(ServerUrl + "presets")
-  //   return;
-  // }, []);
-  const filteredPresets = useCallback(() => {
-    return Presets.filter(preset => preset.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  useEffect(() => {
+    setFilteredPresets(Presets.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase())));
   }, [Presets, searchQuery])
 
   return (
@@ -109,25 +108,33 @@ export default function PresetSection() {
         <Typography variant="h6" gutterBottom sx={{ mb: 1 }}>
           Presets
         </Typography>
-        <TextField value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}></TextField>
-        <List sx={{ overflow: "scroll"}}>
-          {
-            filteredPresets().map((preset) =>  
-            (
+        <TextField
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        ></TextField>
+        <List sx={{ overflow: "scroll" }}>
+          {filteredPresets.map((preset) => (
             <ListItem key={preset.id}>
-              <ListItemButton onClick={() => loadPresetSettings(preset.synthSettings)}>
-              <ListItemText>{preset.id}:{preset.name}</ListItemText>
+              <ListItemButton
+                onClick={() => loadPresetSettings(preset.synthSettings)}
+              >
+                <ListItemText>
+                  {preset.id}:{preset.name}
+                </ListItemText>
               </ListItemButton>
+              <Button onClick={() => requestDeletePreset(preset.id)}>Delete</Button>
             </ListItem>
-          ))
-          }
+          ))}
         </List>
-        {filteredPresets().length > 0 || searchQuery.length == 0 ?
-        <Button onClick={() => fetchPresetsFromServer()}>fetch presets from Server</Button>
-          : 
-          <Button onClick={() => savePresetToServer()}>save presets To Server</Button>
-      }
-        
+        {filteredPresets.length > 0 || searchQuery.length == 0 ? (
+          <Button onClick={() => fetchPresetsFromServer()}>
+            fetch presets from Server
+          </Button>
+        ) : (
+          <Button onClick={() => savePresetToServer()}>
+            save presets To Server
+          </Button>
+        )}
       </Paper>
     </Grid>
   );

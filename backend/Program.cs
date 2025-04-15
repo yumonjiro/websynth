@@ -27,7 +27,6 @@ builder.Services.AddOpenApiDocument(config =>
 builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
-
 var scope = app.Services.CreateScope();
 var created = scope.ServiceProvider.GetRequiredService<PresetDb>().Database.EnsureCreated();
 Console.WriteLine($"Database Created: {created}");
@@ -56,8 +55,15 @@ app.MapPost("/presets", async (Preset preset, PresetDb db) =>
 {
     db.Presets.Add(preset);
     await db.SaveChangesAsync();
-
     return Results.Created($"presets/{preset.Id}", preset);
+});
+
+app.MapDelete("/presets/{id}", async (int id, PresetDb db) => {
+    if(await db.Presets.FindAsync(id) is Preset preset) {
+        db.Presets.Remove(preset);
+        return Results.NoContent();
+    }
+    return Results.NotFound();
 });
 
 app.UseCors(MyAllowSpecificOrigins);
