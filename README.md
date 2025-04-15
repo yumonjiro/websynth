@@ -21,7 +21,7 @@ dotnet run
 # /websynth/frontendに移動
 cd frontend
 npm install
-npm run
+npm run dev
 ```
 3. http://localhost:5173/にアクセスする
 
