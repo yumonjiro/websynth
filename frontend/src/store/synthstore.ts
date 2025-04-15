@@ -79,11 +79,6 @@ export const defaultSetings: SynthSettings = {
   lfoEnvAmount: 0,
 };
 
-interface PresetsState {
-  Presets: Array<Preset>
-  setPresets: (presets:Array<Preset>) => void;
-}
-
 export interface Preset {
   id?: number,
   name: string,
