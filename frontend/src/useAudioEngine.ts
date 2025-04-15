@@ -35,6 +35,7 @@ export const useAudioEngine = () => {
   const lfoNodeRef = useRef<OscillatorNode | null>(null);
   const filterLFOGainRef = useRef<GainNode | null>(null);
   const {
+    masterGain,
     voicingType,
     oscillators,
     filterCutoff,
@@ -62,6 +63,7 @@ export const useAudioEngine = () => {
     const masterGainNode = audioContext.createGain();
     masterGainNodeRef.current = masterGainNode;
     masterGainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
+
     //フィルターの初期化
     const filter = audioContext.createBiquadFilter();
     filter.type = "lowpass";
@@ -128,6 +130,13 @@ export const useAudioEngine = () => {
     }
   }, [lfoFreq, lfoType]);
 
+  useEffect(() => {
+    console.log("Master Gain Changed");
+    if (audioContext && masterGainNodeRef.current) 
+    {
+      masterGainNodeRef.current.gain.linearRampToValueAtTime(masterGain, 0.1);
+    }}, [masterGain]
+    );
   const noteHold = useCallback(
     (midiNote: number) => {
       if (!isInitialized.current) {

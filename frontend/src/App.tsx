@@ -1,11 +1,12 @@
-import { Box, Grid,  Typography } from "@mui/material"; // Box, Typography をインポート
+import { Box, Grid, Typography } from "@mui/material"; // Box, Typography をインポート
 import "./App.css";
 import OscillatorSection from "./components/OscillatorSection";
 import FilterSection from "./components/FilterSection";
 import AmpSection from "./components/AmpSection";
-import LFOSection from "./components/LFOSection"; 
-import KeyboardSection from "./components/KeyboardSection"; 
+import LFOSection from "./components/LFOSection";
+import KeyboardSection from "./components/KeyboardSection";
 import PresetSection from "./components/PresetSection";
+import GlobalSettingsSection from "./components/GlobalSettingsSection";
 
 function App() {
   return (
@@ -20,17 +21,16 @@ function App() {
       <Grid container spacing={2} sx={{ flexGrow: 1, display: "flex", p: 3 }}>
         {/* Preset Section */}
         <Grid
-          size={{ xs: 12, md: 3, lg: 2.4 }} 
+          size={{ xs: 12, md: 3, lg: 2.4 }}
           sx={{
-            height:"50vh",
-            
+            mb: 3
           }}
         >
           <PresetSection />
         </Grid>
         {/* Synth Section */}
         <Grid
-          size={{ xs: 12, md: 9, lg: 9.6 }} 
+          size={{ xs: 12, md: 9, lg: 9.6 }}
           sx={{
             display: "flex",
             flexDirection: "column",
@@ -44,10 +44,11 @@ function App() {
             <FilterSection />
             <AmpSection />
             <LFOSection />
+            <KeyboardSection />
+            <GlobalSettingsSection />
+
           </Grid>
         </Grid>
-        <KeyboardSection />
-          
       </Grid>
     </Box>
   );

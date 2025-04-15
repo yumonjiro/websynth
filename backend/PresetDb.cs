@@ -40,6 +40,7 @@ class PresetDb : DbContext
                 {
                     PresetId = 1,
                     VoicingType = "poly",
+                    MasterGain = 0.5f,
                     FilterCutoff = 1000f,
                     FilterResonance = 0.6f,
                     FilterLFOAmount = 0.1f,
@@ -62,7 +63,7 @@ class PresetDb : DbContext
                             Id = 1, // ★ OscillatorSettings の主キー (HasKeyで指定した場合)
                             Enabled = true,
                             OscillatorType = "Sawtooth", // required
-                            Gain = 0.85f,
+                            Gain = 0.40f,
                             Detune = 0f,
                             OctaveOffset = 0,
                         },
@@ -72,7 +73,7 @@ class PresetDb : DbContext
                             Id = 2, // ★ OscillatorSettings の主キー (HasKeyで指定した場合)
                             Enabled = true,
                             OscillatorType = "Pulse", // required
-                            Gain = 0.85f,
+                            Gain = 0.40f,
                             Detune = 1.5f,
                             OctaveOffset = 0,
                         }

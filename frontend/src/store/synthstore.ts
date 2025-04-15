@@ -18,6 +18,7 @@ export type VoicingType = "mono" | "poly";
 
 export interface SynthSettings {
   voicingType: VoicingType;
+  masterGain: number;
   //OSC
   oscillators: OscillatorSettings[];
 
@@ -39,6 +40,7 @@ export interface SynthSettings {
 }
 
 interface SynthState extends SynthSettings {
+  setMasterGain: (value:number) => void;
   setVoicingType: (voicingType: VoicingType) => void;
   setOscillatorType: (id: number, oscType: OscillatorType) => void;
   setOscillatorGain: (id: number, value: number) => void;
@@ -65,6 +67,7 @@ const initialOscillators: OscillatorSettings[] = [
 ];
 
 export const defaultSetings: SynthSettings = {
+  masterGain: 0.5,
   voicingType: "poly",
   oscillators: initialOscillators,
   filterCutoff: 400,
@@ -88,7 +91,7 @@ export interface Preset {
 
 export const useSynthStore = create<SynthState>((set) => ({
   ...defaultSetings,
-
+  setMasterGain: (value) => set({masterGain:value}),
   setVoicingType: (voicingType) => set({ voicingType: voicingType }),
   setOscillatorType: (id, oscType) =>
     set((state) => ({

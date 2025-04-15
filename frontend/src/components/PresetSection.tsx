@@ -120,7 +120,7 @@ export default function PresetSection() {
   }, [Presets]);
 
   return (
-    <Grid sx={{ ml: 0, height: "100%" }} size={{ xs: 12, md: 12 }}>
+    <Grid sx={{ ml: 0, mb:3, }} size={{ xs: 12, md: 12 }}>
       <Paper
         elevation={2}
         sx={{ display: "flex", flexDirection: "column", height: "100%" }}

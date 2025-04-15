@@ -38,7 +38,7 @@ export default function FilterSection() {
           <Box>
             <Typography variant="caption" id="filter-resonance-label">Resonance: {filterResonance.toFixed(1)}</Typography>
             <Slider
-              min={0.1} max={30} step={0.1} // Q値の範囲を調整 (30くらいでもかなり強烈)
+              min={0.1} max={10} step={0.1} // Q値の範囲を調整 (30くらいでもかなり強烈)
               value={filterResonance}
               onChange={(_, newValue) => setFilterResonance(newValue as number)}
               size="small"

@@ -47,6 +47,7 @@ class SynthSettings
 {
   [JsonIgnore]
   public Preset Preset {get; set; }
+  public float MasterGain {get; set;}
   public required string VoicingType { get; set; }
   public required List<OscillatorSettings> Oscillators { get; set; }
   public float FilterCutoff { get; set; }
