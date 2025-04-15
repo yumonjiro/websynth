@@ -6,8 +6,7 @@ import AmpSection from "./components/AmpSection";
 import LFOSection from "./components/LFOSection"; 
 import KeyboardSection from "./components/KeyboardSection"; 
 import PresetSection from "./components/PresetSection";
-import theme from "./theme";
-import { useEffect } from "react";
+
 function App() {
   return (
     <Box

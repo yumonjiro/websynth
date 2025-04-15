@@ -1,5 +1,5 @@
 import { useAudioEngine } from "../useAudioEngine";
-import { Box, Button, Drawer, Stack, TextField, Typography } from "@mui/material";
+import { Box, Button, Drawer, Stack, TextField } from "@mui/material";
 import { Piano, KeyboardShortcuts, MidiNumbers } from "react-piano"; //https://github.com/kevinsqi/react-piano?tab=readme-ov-file 
 import "react-piano/dist/styles.css";
 import "./custumPianoStyles.css";

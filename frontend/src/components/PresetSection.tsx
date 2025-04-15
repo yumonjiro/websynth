@@ -1,4 +1,4 @@
-import { useCallback, useDeferredValue, useEffect, useState } from "react";
+import { useCallback,  useEffect, useState } from "react";
 import {
   useSynthStore,
   getSettingsFromState,
@@ -15,7 +15,6 @@ import {
   ListItemText,
   ListItemButton,
   Box,
-  InputAdornment,
   Stack,
 } from "@mui/material"; // Paper, Divider を追加
 
