@@ -14,19 +14,25 @@ git clone https://github.com/yumonjiro/websynth.git
 ```
 # /websynth/backendに移動
 cd backend
+# APIサーバーの立ち上げ。デフォルトのローカルサーバーアドレスはlocalhost:5193
 dotnet run
 ```
+
+
 2. フロントエンドのホスティング
 ```
 # /websynth/frontendに移動
 cd frontend
 npm install
+# デフォルトのアドレスはlocahost:5173。devモードでは、サーバーのアドレスがlocalhost:5193に設定される(PesetSection.tsxを書き換えれば変更できる)
 npm run dev
 ```
-3. http://localhost:5173/にアクセスする
+
+3. http://localhost:5173/ にアクセスする
 
 ## 概要
 - シンプルな減算合成方式のシンセサイザー
+- ポリフォニック対応
 - プリセットをDBに保存して、読み込める
 
 
