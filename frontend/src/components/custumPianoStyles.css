@@ -1,0 +1,23 @@
+.ReactPiano__Key--active {
+    background: #42a5f5;  /* Change the default active key color to bright red */
+  }
+  
+  .ReactPiano__Key--accidental {
+    background: #000;  /* Change accidental keys to be completely black */
+  }
+
+  .ReactPiano__Key--natural {
+    background: #1e1e1e;
+    border: 1px solid #888;
+  }
+
+  .ReactPiano__Key--active.ReactPiano__Key--accidental {
+    border: 1px solid #fff;
+    border-top: 1px solid #121212;
+  }
+  
+  .ReactPiano__Key--active.ReactPiano__Key--natural {
+    border: 1px solid #121212;
+    /* Slight height reduction for "pushed-down" effect */
+    height: 98%;
+  }

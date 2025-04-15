@@ -20,6 +20,7 @@ const theme = createTheme({
       primary: grey[100],  // メインの文字色 (白に近いグレー)
       secondary: grey[400], // サブの文字色 (少し暗いグレー)
     },
+    divider:  'rgba(255, 255, 255, 0.12)',
   },
   typography: {
     fontFamily: [

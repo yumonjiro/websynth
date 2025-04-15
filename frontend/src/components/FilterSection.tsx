@@ -5,9 +5,9 @@ export default function FilterSection() {
   const {
     filterCutoff, filterResonance, filterLFOAmount,
     setFilterCutoff, setFilterResonance, setFilterLFOAmount
-  } = useSynthStore(); // TODO: セレクタを最適化したい
+  } = useSynthStore(); 
 
-  // カットオフ周波数を対数的に表示/操作するためのヘルパー (オプション)
+  // カットオフ周波数を対数に変換したい
   const getLogValue = (value: number) => Math.log10(value);
   const getExpValue = (logValue: number) => Math.pow(10, logValue);
 
@@ -46,7 +46,7 @@ export default function FilterSection() {
               valueLabelDisplay="auto"
             />
           </Box>
-          {/* LFO */}
+          {/* LFO Amount*/}
           <Box>
             <Typography variant="caption" id="filter-resonance-label">LFO Amount: {filterLFOAmount.toFixed(1)}</Typography>
             <Slider

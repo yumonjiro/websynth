@@ -1,64 +1,56 @@
-import { Box, Container, Grid, Typography } from "@mui/material"; // Box, Typography をインポート
+import { Box, Grid,  Typography } from "@mui/material"; // Box, Typography をインポート
 import "./App.css";
-// import { useAudioEngine } from "./useAudioEngine"; // 必要ならコメント解除
 import OscillatorSection from "./components/OscillatorSection";
 import FilterSection from "./components/FilterSection";
 import AmpSection from "./components/AmpSection";
-import LFOSection from "./components/LFOSection"; // LFOSectionも同様に修正が必要
-import KeyboardSection from "./components/KeyboardSection"; // KeyboardSectionも同様に修正が必要
+import LFOSection from "./components/LFOSection"; 
+import KeyboardSection from "./components/KeyboardSection"; 
 import PresetSection from "./components/PresetSection";
-import PresetDrawerSection from "./components/PresetDrawerSection";
-// import { PresetManager } from "./components/PresetManager"; // PresetManagerも同様に修正が必要
-// import InitializationButton from "./components/InitializationButton"; // 必要ならコメント解除
-// import VoicingControl from "./components/VoicingControl"; // 必要なら作成・コメント解除
-
+import theme from "./theme";
 function App() {
-  // const { initializeAudioContext } = useAudioEngine(); // 必要に応じて
-  // const [isInitialized, setIsInitialized] = useState(false); // 必要に応じて
-  // const handleInitialize = () => { ... }; // 必要に応じて
-
+  
   return (
-    <Grid container>
-    {/* <Grid size={2}>
-    <PresetDrawerSection/>
-    </Grid> */}
-    <Grid>
-    <Container maxWidth="xl" sx={{ py: 4 }}>
-      {" "}
-      {/* 上下にpaddingを追加 */}
-      <Typography
-        variant="h3"
-        component="h1"
-        align="center"
-        gutterBottom
-        sx={{ fontWeight: 700, color: "primary.main", mb: 4 }}
-      >
-        Web Synthesizer
-      </Typography>
-      {/* TODO: Add Initialization Button and Voicing controls here if needed */}
-      {/* <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
-           <InitializationButton isInitialized={isInitialized} onInitialize={handleInitialize} />
-           <VoicingControl />
-         </Box>
-      */}
-      {/* シンセコントロールセクション */}
-      {/* spacingを調整 */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        {/* 各セクションコンポーネントを配置 */}
-        <OscillatorSection />
-        <FilterSection />
-        <AmpSection />
-        <LFOSection />
-      </Grid>
-      {/* プリセットマネージャーとキーボードセクション */}
-      <Grid container spacing={3} sx={{ mb: 12 }}>
+    <Box
+      sx={{
+        minWidth: "90vw",
+        minHeight: "100vh",
+        bgcolor: "background.default",
+      }}
+    >
+      <Typography variant="h3" /* ... */>Web Synthesizer</Typography>
+      <Grid container spacing={2} sx={{ flexGrow: 1, display: "flex", p: 3 }}>
+        {/* Preset Section */}
+        <Grid
+          size={{ xs: 12, md: 3, lg: 2.4 }} 
+          sx={{
+            height:"50vh",
+            
+          }}
+        >
+          <PresetSection />
+        </Grid>
+        {/* Synth Section */}
+        <Grid
+          size={{ xs: 12, md: 9, lg: 9.6 }} 
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            height: "100vh",
+            overflowY: "auto",
+          }}
+        >
+          {/* Synth Control Sections */}
+          <Grid container spacing={2} sx={{ mb: 3, flexShrink: 0 }}>
+            <OscillatorSection />
+            <FilterSection />
+            <AmpSection />
+            <LFOSection />
+          </Grid>
+        </Grid>
         <KeyboardSection />
+          
       </Grid>
-    </Container>
-    </Grid>
-    </Grid>
-    
-
+    </Box>
   );
 }
 

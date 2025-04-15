@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useDeferredValue, useEffect, useState } from "react";
 import {
   useSynthStore,
   getSettingsFromState,
@@ -14,6 +14,9 @@ import {
   ListItem,
   ListItemText,
   ListItemButton,
+  Box,
+  InputAdornment,
+  Stack,
 } from "@mui/material"; // Paper, Divider を追加
 
 const isDevMode = import.meta.env.DEV;
@@ -37,6 +40,7 @@ const ServerUrl = isDevMode ? "http://localhost:5193" : "";
 //     return null;
 //   }
 export default function PresetSection() {
+  const [isInitialized, setIsInitialized] = useState(false);
   const { loadPresetSettings } = useSynthStore();
   const [Presets, setPresets] = useState<Preset[]>([]);
   const [filteredPresets, setFilteredPresets] = useState<Preset[]>([]);
@@ -69,9 +73,9 @@ export default function PresetSection() {
     });
   }, [searchQuery]);
 
-  const fetchPresetsFromServer = useCallback(() => {
+  const fetchPresetsFromServer = useCallback(async () => {
     const url = ServerUrl + "/presets";
-    fetch(url, { method: "GET" })
+    await fetch(url, { method: "GET" })
       .then((response) => {
         console.log(`response: ${response}`);
         return response.json();
@@ -80,6 +84,7 @@ export default function PresetSection() {
         setPresets(data);
         console.log("Preset downloaded");
       });
+    
   }, []);
 
   const requestDeletePreset = useCallback(
@@ -105,49 +110,62 @@ export default function PresetSection() {
     );
   }, [Presets, searchQuery]);
 
+  useEffect(() => {
+    fetchPresetsFromServer();
+  }, []);
+  useEffect(() => {
+    if(!isInitialized && Presets.length > 0) {
+      loadPresetSettings(Presets[0].synthSettings);
+      setIsInitialized(true);
+    }
+  }, [Presets]);
+
   return (
-    <Grid size={{ xs: 12, md: 6, lg: 3 }}>
-      {" "}
-      {/* lg={3} で 4列レイアウトに対応 */}
+    <Grid sx={{ ml: 0, height: "100%" }} size={{ xs: 12, md: 12 }}>
       <Paper
         elevation={2}
-        sx={{ p: 2, height: "100%", display: "flex", flexDirection: "column" }}
+        sx={{ display: "flex", flexDirection: "column", height: "100%" }}
       >
-        <Typography variant="h6" gutterBottom sx={{ mb: 1 }}>
-          Presets
-        </Typography>
-        <TextField
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        ></TextField>
-        <List sx={{ overflow: "scroll" }}>
-          {filteredPresets.map((preset) => (
-            <ListItem key={preset.id}>
-              <ListItemButton
-                onClick={() => loadPresetSettings(preset.synthSettings)}
-              >
-                <ListItemText>
-                  {preset.id}:{preset.name}
-                </ListItemText>
-              </ListItemButton>
-              {preset.isBuiltin ? 
-              <></> :
-              <Button onClick={() => requestDeletePreset(preset.id)}>
-                Delete
-              </Button>
-              } 
-            </ListItem>
-          ))}
-        </List>
-        {filteredPresets.length > 0 || searchQuery.length == 0 ? (
-          <Button onClick={() => fetchPresetsFromServer()}>
-            fetch presets from Server
-          </Button>
-        ) : (
-          <Button onClick={() => savePresetToServer()}>
-            save presets To Server
-          </Button>
-        )}
+        <Typography variant="h6" /* ... */>Presets</Typography>
+        <Box sx={{ p: 1.5, borderBottom: 1, borderColor: 'divider' }}>
+          <Stack direction="row" spacing={1} alignItems="center">
+            <TextField
+              fullWidth
+              variant="outlined"
+              size="small"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') savePresetToServer(); }}
+            />
+            <Button
+              variant="contained"
+              size="small"
+              onClick={savePresetToServer}
+              disabled={!searchQuery.trim()} // 名前が空(空白のみ含む)なら無効
+              // startIcon={<SaveIcon />}
+              sx={{ flexShrink: 0 }} // ボタンが縮まないように
+            >
+              Save
+            </Button>
+          </Stack>
+        </Box>
+        <Box sx={{ overflowY: "auto", flexGrow: 1, p: 1}}>
+          <List>
+            {filteredPresets.map((preset) => (
+              <ListItem key={preset.id}>
+                <ListItemButton onClick={() => loadPresetSettings(preset.synthSettings)}>
+                  <ListItemText>
+                    {preset.id}:{preset.name}
+                  </ListItemText>
+                </ListItemButton>
+                {
+                  preset.isBuiltin ? <></> :
+                  <Button onClick={() => requestDeletePreset(preset.id)}>delete</Button>
+                }
+              </ListItem>
+            ))}
+          </List>
+        </Box>
       </Paper>
     </Grid>
   );

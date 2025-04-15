@@ -5,17 +5,16 @@ export default function AmpSection() {
   const {
     envAttack, envDecay, envSustain, envRelease,
     setEnvAttack, setEnvDecay, setEnvSustain, setEnvRelease,
-  } = useSynthStore(); // TODO: セレクタを最適化する
+  } = useSynthStore(); 
 
   return (
-    //TODO レイアウトわからんよーー
     <Grid size={{ xs:12, md:6, lg:3}}> {/* lg={3} で 4列レイアウトに対応 */}
       {/* 各セクションを Paper で囲み、高さを100%に */}
       <Paper elevation={2} sx={{ p: 2, height: '100%', display: 'flex', flexDirection: 'column' }}>
         <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
           Amplitude Envelope
         </Typography>
-        <Stack spacing={1.5} sx={{ flexGrow: 1 }}> {/* flexGrowで高さいっぱいに広げる */}
+        <Stack spacing={1.5} sx={{ flexGrow: 1 }}> 
           {/* Attack */}
           <Box>
             <Typography variant="caption">Attack: {envAttack.toFixed(2)}s</Typography>

@@ -18,7 +18,6 @@ export default function OscillatorSection() {
 
   return (
     <Grid size={{ xs: 12, md: 6, lg: 3 }}>
-      {" "}
       {/* lg={3} で 4列レイアウトに対応 */}
       <Paper
         elevation={2}
@@ -36,7 +35,7 @@ export default function OscillatorSection() {
           {/* オシレーターが増えた時用にスクロール */}
           {oscillators.map((oscSettings, index) => (
             <Box key={oscSettings.id} sx={{ pt: index > 0 ? 2 : 0 }}>
-              {" "}
+              
               {/* 2つ目以降のOSCの上に少しpadding */}
               <Typography variant="body2" sx={{ fontWeight: "bold", mb: 1.5 }}>
                 Oscillator {oscSettings.id}
