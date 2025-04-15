@@ -36,7 +36,7 @@ export default function GlobalSettingsSection() {
             <Slider
               min={0.0}
               max={1}
-              step={0.01} // Q値の範囲を調整 (30くらいでもかなり強烈)
+              step={0.01}
               value={masterGain}
               onChange={(_, newValue) => setMasterGain(newValue as number)}
               size="small"
@@ -45,7 +45,6 @@ export default function GlobalSettingsSection() {
           <Box>
             <Typography variant="caption">Voicing</Typography>
             <FormControl fullWidth size="small">
-              {/* InputLabelは常に表示されるように variant="standard" or shrink */}
               <InputLabel
                 shrink={false}
                 sx={{
@@ -56,7 +55,6 @@ export default function GlobalSettingsSection() {
                 }}
               ></InputLabel>
               <Select
-                // label="Type" // labelを使うとスペース取るのでInputLabelを外に出す
                 value={voicingType}
                 onChange={(e) => setVoicingType(e.target.value as VoicingType)}
               >

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from "react";
-import { useSynthStore } from "./store/synthstore";
+import { useSynthStore } from "../store/synthstore";
 import { nanoid } from "nanoid";
 let audioContext: AudioContext | null = null;
 
@@ -132,11 +132,10 @@ export const useAudioEngine = () => {
 
   useEffect(() => {
     console.log("Master Gain Changed");
-    if (audioContext && masterGainNodeRef.current) 
-    {
+    if (audioContext && masterGainNodeRef.current) {
       masterGainNodeRef.current.gain.linearRampToValueAtTime(masterGain, 0.1);
-    }}, [masterGain]
-    );
+    }
+  }, [masterGain]);
   const noteHold = useCallback(
     (midiNote: number) => {
       if (!isInitialized.current) {
@@ -210,8 +209,8 @@ export const useAudioEngine = () => {
         //同じ音が鳴っていないか
         if (activeNotes.has(midiNote)) {
           //すでにsetTimeoutは呼ばれているので、
-          const nodes = activeNotes.get(midiNote)
-          if(nodes) {
+          const nodes = activeNotes.get(midiNote);
+          if (nodes) {
             nodes.envelopeGain.gain.cancelScheduledValues(0);
             nodes.envelopeGain.gain.setValueAtTime(0, audioContext.currentTime);
           }

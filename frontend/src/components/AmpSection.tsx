@@ -8,8 +8,7 @@ export default function AmpSection() {
   } = useSynthStore(); 
 
   return (
-    <Grid size={{ xs:12, md:6, lg:3}}> {/* lg={3} で 4列レイアウトに対応 */}
-      {/* 各セクションを Paper で囲み、高さを100%に */}
+    <Grid size={{ xs:12, md:6, lg:3}}> 
       <Paper elevation={2} sx={{ p: 2, height: '100%', display: 'flex', flexDirection: 'column' }}>
         <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
           Amplitude Envelope

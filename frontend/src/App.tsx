@@ -7,7 +7,7 @@ import LFOSection from "./components/LFOSection";
 import KeyboardSection from "./components/KeyboardSection";
 import PresetSection from "./components/PresetSection";
 import GlobalSettingsSection from "./components/GlobalSettingsSection";
-
+import theme from "./theme";
 function App() {
   return (
     <Box
@@ -17,13 +17,15 @@ function App() {
         bgcolor: "background.default",
       }}
     >
-      <Typography variant="h3" /* ... */>Web Synthesizer</Typography>
+      <Typography variant="h3" color={theme.palette.primary.main}>
+        Web Synthesizer
+      </Typography>
       <Grid container spacing={2} sx={{ flexGrow: 1, display: "flex", p: 3 }}>
         {/* Preset Section */}
         <Grid
           size={{ xs: 12, md: 3, lg: 2.4 }}
           sx={{
-            mb: 3
+            mb: 3,
           }}
         >
           <PresetSection />
@@ -46,7 +48,6 @@ function App() {
             <LFOSection />
             <KeyboardSection />
             <GlobalSettingsSection />
-
           </Grid>
         </Grid>
       </Grid>

@@ -58,9 +58,11 @@ app.MapPost("/presets", async (Preset preset, PresetDb db) =>
     return Results.Created($"presets/{preset.Id}", preset);
 });
 
-app.MapDelete("/presets/{id}", async (int id, PresetDb db) => {
+app.MapDelete("/presets/{id}", async (int id, PresetDb db) =>
+{
     Console.WriteLine($"delete request received. Preset id:{id}");
-    if(await db.Presets.FindAsync(id) is Preset preset && !preset.IsBuiltin) {
+    if (await db.Presets.FindAsync(id) is Preset preset && !preset.IsBuiltin)
+    {
         db.Presets.Remove(preset);
         await db.SaveChangesAsync();
         return Results.NoContent();

@@ -29,21 +29,39 @@ export default function LFOSection() {
           LFO
         </Typography>
         <Stack spacing={1.5} sx={{ flexGrow: 1 }}>
-          <Select value={lfoType} onChange={(e) => setLFOType(e.target.value as OscillatorType)}>
+          <Select
+            value={lfoType}
+            onChange={(e) => setLFOType(e.target.value as OscillatorType)}
+          >
             <MenuItem value="sine">Sine</MenuItem>
             <MenuItem value="square">Square</MenuItem>
             <MenuItem value="sawtooth">Sawtooth</MenuItem>
             <MenuItem value="triangle">Triangle</MenuItem>
           </Select>
           <Box>
-            <Typography variant="caption">Frequency: {lfoFreq.toFixed(2)}</Typography>
-            <Slider size="small" min={0.1} max={100} step={0.1}
-            onChange={(_, value) => setLFOFreq(value)}/>
+            <Typography variant="caption">
+              Frequency: {lfoFreq.toFixed(2)}
+            </Typography>
+            <Slider
+              size="small"
+              min={0.1}
+              max={100}
+              step={0.1}
+              onChange={(_, value) => setLFOFreq(value)}
+            />
           </Box>
           <Box>
-            <Typography variant="caption">Env Amount:{lfoEnvAmount.toFixed(2)}</Typography>
-            <Slider size="small" defaultValue={0.0} min={-1.0} max={1.0} step={0.01}
-            onChange={(_, value) => setLFOEnvAmount(value)}/>
+            <Typography variant="caption">
+              Env Amount:{lfoEnvAmount.toFixed(2)}
+            </Typography>
+            <Slider
+              size="small"
+              defaultValue={0.0}
+              min={-1.0}
+              max={1.0}
+              step={0.01}
+              onChange={(_, value) => setLFOEnvAmount(value)}
+            />
           </Box>
         </Stack>
       </Paper>

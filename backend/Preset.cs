@@ -6,12 +6,12 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 class Preset
-{ 
+{
   public int Id { get; set; }
   public string? Name { get; set; }
 
   [DefaultValue(false)]
-  public bool IsBuiltin {get; set;}
+  public bool IsBuiltin { get; set; }
   public SynthSettings SynthSettings { get; set; }
 }
 
@@ -25,7 +25,7 @@ enum WaveForm
 class OscillatorSettings
 {
   [JsonIgnore]
-  public SynthSettings SynthSettings {get; set;}
+  public SynthSettings SynthSettings { get; set; }
   public int Id { get; set; }
   public bool Enabled { get; set; }
   public required string OscillatorType
@@ -41,13 +41,13 @@ class OscillatorSettings
 
   public float Gain { get; set; }
   public float Detune { get; set; }
-  public int OctaveOffset {get; set;}
+  public int OctaveOffset { get; set; }
 }
 class SynthSettings
 {
   [JsonIgnore]
-  public Preset Preset {get; set; }
-  public float MasterGain {get; set;}
+  public Preset Preset { get; set; }
+  public float MasterGain { get; set; }
   public required string VoicingType { get; set; }
   public required List<OscillatorSettings> Oscillators { get; set; }
   public float FilterCutoff { get; set; }
@@ -58,12 +58,16 @@ class SynthSettings
   public float EnvSustain { get; set; }
   public float EnvRelease { get; set; }
   public float LFOFreq { get; set; }
-  public required string LfoType { get { return _LFOType.ToString().ToLower(); } 
-  set {
-    Enum.TryParse<WaveForm>(value, true, out WaveForm result);
-    _LFOType = result;
-  } }
-  private WaveForm _LFOType; 
+  public required string LfoType
+  {
+    get { return _LFOType.ToString().ToLower(); }
+    set
+    {
+      Enum.TryParse<WaveForm>(value, true, out WaveForm result);
+      _LFOType = result;
+    }
+  }
+  private WaveForm _LFOType;
   public float LfoEnvAmount { get; set; }
 }
 /*

@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from "react";
 
+//react-pianoをレスポンシブ対応させたい。
 type WindowSize = {
   windowWidth: number;
   windowHeight: number;

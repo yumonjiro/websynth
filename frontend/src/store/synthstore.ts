@@ -40,7 +40,7 @@ export interface SynthSettings {
 }
 
 interface SynthState extends SynthSettings {
-  setMasterGain: (value:number) => void;
+  setMasterGain: (value: number) => void;
   setVoicingType: (voicingType: VoicingType) => void;
   setOscillatorType: (id: number, oscType: OscillatorType) => void;
   setOscillatorGain: (id: number, value: number) => void;
@@ -62,8 +62,22 @@ interface SynthState extends SynthSettings {
 }
 
 const initialOscillators: OscillatorSettings[] = [
-  { id: 1, enabled: true, gain: 0.5, oscillatorType: "sine", octaveOffset: 0, detune: 0 },
-  { id: 2, enabled: true, gain: 0.5, oscillatorType: "sine", octaveOffset: 0, detune: 0 },
+  {
+    id: 1,
+    enabled: true,
+    gain: 0.5,
+    oscillatorType: "sine",
+    octaveOffset: 0,
+    detune: 0,
+  },
+  {
+    id: 2,
+    enabled: true,
+    gain: 0.5,
+    oscillatorType: "sine",
+    octaveOffset: 0,
+    detune: 0,
+  },
 ];
 
 export const defaultSetings: SynthSettings = {
@@ -83,15 +97,15 @@ export const defaultSetings: SynthSettings = {
 };
 
 export interface Preset {
-  id?: number,
-  name: string,
-  isBuiltin: boolean,
-  synthSettings:SynthSettings,
+  id?: number;
+  name: string;
+  isBuiltin: boolean;
+  synthSettings: SynthSettings;
 }
 
 export const useSynthStore = create<SynthState>((set) => ({
   ...defaultSetings,
-  setMasterGain: (value) => set({masterGain:value}),
+  setMasterGain: (value) => set({ masterGain: value }),
   setVoicingType: (voicingType) => set({ voicingType: voicingType }),
   setOscillatorType: (id, oscType) =>
     set((state) => ({

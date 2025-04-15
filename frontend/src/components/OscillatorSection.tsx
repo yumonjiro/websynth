@@ -26,16 +26,11 @@ export default function OscillatorSection() {
         <Typography variant="h6" gutterBottom sx={{ mb: 1 }}>
           Oscillators
         </Typography>
-        <Stack
-          spacing={2}
-          divider={<Divider flexItem />}
-          sx={{ flexGrow: 1 }}
-        >
+        <Stack spacing={2} divider={<Divider flexItem />} sx={{ flexGrow: 1 }}>
           {" "}
           {/* オシレーターが増えた時用にスクロール */}
           {oscillators.map((oscSettings, index) => (
             <Box key={oscSettings.id} sx={{ pt: index > 0 ? 2 : 0 }}>
-              
               {/* 2つ目以降のOSCの上に少しpadding */}
               <Typography variant="body2" sx={{ fontWeight: "bold", mb: 1.5 }}>
                 Oscillator {oscSettings.id}
@@ -54,8 +49,7 @@ export default function OscillatorSection() {
                           mb: 0.5,
                           fontSize: "0.8rem",
                         }}
-                      >
-                      </InputLabel>
+                      ></InputLabel>
                       <Select
                         labelId={`osc-type-label-${oscSettings.id}`}
                         // label="Type" // labelを使うとスペース取るのでInputLabelを外に出す
@@ -64,8 +58,9 @@ export default function OscillatorSection() {
                           setOscillatorType(
                             oscSettings.id,
                             e.target.value as OscillatorType
-                        )}
-                        
+                          )
+                        }
+
                         // variant="outlined" // デフォルト
                       >
                         <MenuItem value="sine">Sine</MenuItem>
@@ -78,9 +73,7 @@ export default function OscillatorSection() {
                   </Grid>
                   {/* Gain Slider */}
                   <Grid size={{ xs: 12 }}>
-                    <Typography
-                      variant="caption"
-                    >
+                    <Typography variant="caption">
                       Level: {(oscSettings.gain * 100).toFixed(0)}%
                     </Typography>
                     <Slider
@@ -95,7 +88,6 @@ export default function OscillatorSection() {
                     />
                   </Grid>
                 </Stack>
-                {/* TODO: オクターブと */}
               </Grid>
             </Box>
           ))}
