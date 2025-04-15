@@ -23,6 +23,7 @@ cd frontend
 npm install
 npm run
 ```
+3. http://localhost:5173/にアクセスする
 
 ## 概要
 - シンプルな減算合成方式のシンセサイザー
