@@ -1,5 +1,5 @@
 import { useAudioEngine } from "../useAudioEngine";
-import { Box, Button, Drawer, Fab, Grid } from "@mui/material";
+import { Box, Button, Drawer, Stack, TextField, Typography } from "@mui/material";
 import { Piano, KeyboardShortcuts, MidiNumbers } from "react-piano"; //https://github.com/kevinsqi/react-piano?tab=readme-ov-file 
 import "react-piano/dist/styles.css";
 import "./custumPianoStyles.css";
@@ -49,26 +49,38 @@ export default function KeyboardSection() {
 
   const { noteHold, noteRelease } = useAudioEngine();
   return (
-    <Box>
-      <Button sx={{
-        position:"absolute",
-        top: "90%",
-        left:"50%"
-      }}>toggle</Button>
-    <Drawer anchor="bottom" open={open} variant="persistent" sx={{
-      height:"30vh"
+    <Box sx={{
     }}>
-      <Button onClick={() => handleOctaveDown()}>-</Button>
-      <Button onClick={() => handleOctaveUp()}>+</Button> 
+    <Drawer anchor="bottom" open={false} variant="persistent" sx={{
+      height:"40vh"
+    }}>
+      <Stack display="flex" flexDirection="row"
+      justifyContent="center"
+      justifyItems="center"
+      alignContent="center"
+      alignItems="center"
+      >
+      <Button  onClick={() => handleOctaveDown()}>Oct -</Button>
+      <TextField 
+      
+      variant="outlined"
+      size="small"
+      sx={{
+        maxWidth:"50px"
+      }}
+      value={keyOctaveOffset}/>
+      <Button onClick={() => handleOctaveUp()}>Oct +</Button> 
+      </Stack>
+      
       <Box height={"100%"} width={"100%"}>
       <Piano
         
         noteRange={{ first: noteRange.firstNote, last: noteRange.lastNote }}
-        playNote={(midiNumber) => {
-          noteHold(midiNumber as number);
+        playNote={(midiNumber: number) => {
+          noteHold(midiNumber);
         }}
-        stopNote={(midiNumber) => {
-          noteRelease(midiNumber as number);
+        stopNote={(midiNumber: number) => {
+          noteRelease(midiNumber);
         }}
         width={"1000"}
         keyboardShortcuts={keyboardShortcuts}
