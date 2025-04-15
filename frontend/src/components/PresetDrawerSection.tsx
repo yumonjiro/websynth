@@ -14,7 +14,9 @@ import {
   ListItem,
   ListItemText,
   ListItemButton,
+  Drawer,
 } from "@mui/material"; // Paper, Divider を追加
+import CachedOutlinedIcon from '@mui/icons-material/CachedOutlined';
 
 const isDevMode = import.meta.env.DEV;
 
@@ -36,7 +38,7 @@ const ServerUrl = isDevMode ? "http://localhost:5193" : "";
 //     console.log("Preset not Found");
 //     return null;
 //   }
-export default function PresetSection() {
+export default function PresetDrawerSection() {
   const { loadPresetSettings } = useSynthStore();
   const [Presets, setPresets] = useState<Preset[]>([]);
   const [filteredPresets, setFilteredPresets] = useState<Preset[]>([]);
@@ -105,9 +107,13 @@ export default function PresetSection() {
     );
   }, [Presets, searchQuery]);
 
+  //コンポーネント初期化時に一回プリセットをダウンロード
+  useEffect(() => {
+    fetchPresetsFromServer();
+  }, []);
+
   return (
-    <Grid size={{ xs: 12, md: 6, lg: 3 }}>
-      {" "}
+    <Drawer variant="persistent" open>
       {/* lg={3} で 4列レイアウトに対応 */}
       <Paper
         elevation={2}
@@ -139,16 +145,7 @@ export default function PresetSection() {
             </ListItem>
           ))}
         </List>
-        {filteredPresets.length > 0 || searchQuery.length == 0 ? (
-          <Button onClick={() => fetchPresetsFromServer()}>
-            fetch presets from Server
-          </Button>
-        ) : (
-          <Button onClick={() => savePresetToServer()}>
-            save presets To Server
-          </Button>
-        )}
       </Paper>
-    </Grid>
+    </Drawer>
   );
 }

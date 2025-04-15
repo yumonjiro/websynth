@@ -25,10 +25,12 @@ class PresetDb : DbContext
         //    });
         modelBuilder.Entity<Preset>(b =>
         {
+            b.HasKey(p => p.Id);
             b.HasData(new
             {
                 Id = 1,
                 Name = "Init Lead",
+                IsBuiltin = true,
             });
             b.OwnsOne(p => p.SynthSettings, synthSettingsBuilder =>
             {

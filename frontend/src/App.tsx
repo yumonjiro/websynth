@@ -1,4 +1,4 @@
-import { Container, Grid, Typography } from "@mui/material"; // Box, Typography をインポート
+import { Box, Container, Grid, Typography } from "@mui/material"; // Box, Typography をインポート
 import "./App.css";
 // import { useAudioEngine } from "./useAudioEngine"; // 必要ならコメント解除
 import OscillatorSection from "./components/OscillatorSection";
@@ -7,6 +7,7 @@ import AmpSection from "./components/AmpSection";
 import LFOSection from "./components/LFOSection"; // LFOSectionも同様に修正が必要
 import KeyboardSection from "./components/KeyboardSection"; // KeyboardSectionも同様に修正が必要
 import PresetSection from "./components/PresetSection";
+import PresetDrawerSection from "./components/PresetDrawerSection";
 // import { PresetManager } from "./components/PresetManager"; // PresetManagerも同様に修正が必要
 // import InitializationButton from "./components/InitializationButton"; // 必要ならコメント解除
 // import VoicingControl from "./components/VoicingControl"; // 必要なら作成・コメント解除
@@ -17,7 +18,11 @@ function App() {
   // const handleInitialize = () => { ... }; // 必要に応じて
 
   return (
-    // ContainerのmaxWidthを調整 (xl など広めにするかはお好みで)
+    <Grid container>
+    {/* <Grid size={2}>
+    <PresetDrawerSection/>
+    </Grid> */}
+    <Grid>
     <Container maxWidth="xl" sx={{ py: 4 }}>
       {" "}
       {/* 上下にpaddingを追加 */}
@@ -47,10 +52,13 @@ function App() {
       </Grid>
       {/* プリセットマネージャーとキーボードセクション */}
       <Grid container spacing={3} sx={{ mb: 12 }}>
-        <PresetSection />
         <KeyboardSection />
       </Grid>
     </Container>
+    </Grid>
+    </Grid>
+    
+
   );
 }
 

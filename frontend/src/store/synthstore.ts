@@ -87,17 +87,9 @@ interface PresetsState {
 export interface Preset {
   id?: number,
   name: string,
+  isBuiltin: boolean,
   synthSettings:SynthSettings,
 }
-
-export const usePresetStore = create<PresetsState>((set) => ({
-  Presets: [],
-
-  setPresets: (presets) => set({
-    Presets: presets
-    }),
-  })
-);
 
 export const useSynthStore = create<SynthState>((set) => ({
   ...defaultSetings,
