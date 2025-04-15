@@ -1,5 +1,5 @@
 
-# ウェブ上で動くシンセサイザー
+# ウェブ上で動くポリフォニックシンセサイザー
 
 <img width="1440" alt="スクリーンショット 2025-04-16 4 31 56" src="https://github.com/user-attachments/assets/5c66fd54-a91b-476f-ae5d-6f2caaf38e58" />
 
