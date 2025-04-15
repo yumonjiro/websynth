@@ -32,7 +32,7 @@ npm run dev
 
 ## 概要
 - シンプルな減算合成方式のシンセサイザー
-- ポリフォニック対応
+- ポリフォニック/モノフォニックの切り替え([ポリフォニックのイメージ](https://www.reddit.com/r/synthesizers/comments/13biuw8/comment/jjbim4l/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button))
 - プリセットをDBに保存して、読み込める
 
 
