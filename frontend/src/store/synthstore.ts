@@ -135,6 +135,7 @@ export const useSynthStore = create<SynthState>((set) => ({
 
 export const getSettingsFromState = (state: SynthState) => {
   const {
+    masterGain,
     voicingType: voicing,
     oscillators,
     filterCutoff,
@@ -149,6 +150,7 @@ export const getSettingsFromState = (state: SynthState) => {
     lfoEnvAmount,
   } = state;
   const settings: SynthSettings = {
+    masterGain,
     voicingType: voicing,
     oscillators,
     filterCutoff,

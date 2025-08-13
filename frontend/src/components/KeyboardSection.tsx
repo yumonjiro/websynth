@@ -2,7 +2,6 @@ import { useAudioEngine } from "../hooks/useAudioEngine";
 import {
   Box,
   Button,
-  Drawer,
   Grid,
   Paper,
   Stack,
@@ -14,6 +13,11 @@ import "./custumPianoStyles.css";
 import { useCallback, useEffect, useState } from "react";
 const RANGEOFFSET = 12;
 
+type KeyboardShortcut = {
+  key: string;
+  midiNumber: number;
+};
+
 export default function KeyboardSection() {
   const [keyOctaveOffset, setOctaveOffset] = useState<number>(0);
 
@@ -22,7 +26,7 @@ export default function KeyboardSection() {
     firstNote: MidiNumbers.fromNote("c4") + 12*keyOctaveOffset,
     lastNote: MidiNumbers.fromNote("e5") + 12*keyOctaveOffset,
   });
-  const [noteRange2, setNoteRange2] = useState({
+  const [noteRange2] = useState({
     firstNote: noteRange.firstNote + RANGEOFFSET,
     lastNote: noteRange.lastNote + RANGEOFFSET,
   });
@@ -37,38 +41,42 @@ export default function KeyboardSection() {
     keyboardConfig: KeyboardShortcuts.BOTTOM_ROW,
   });
 
-  const [keyboardShortcuts, setShortCuts] = useState<Array<object>>([
+  // const [keyboardShortcuts, setShortCuts] = useState<Array<object>>([
+  //   ...sc1,
+  //   ...sc2,
+  // ]);
+
+    const [keyboardShortcuts, setShortCuts] = useState<KeyboardShortcut[]>([
     ...sc1,
     ...sc2,
   ]);
+  const handleOctaveUp = useCallback(() => {
+    setOctaveOffset(keyOctaveOffset + 1);
+    const newRange = noteRange;
+    newRange.firstNote += 12;
+    newRange.lastNote += 12;
+    setNoteRange(newRange);
+    setShortCuts(
+      KeyboardShortcuts.create({
+        ...newRange,
+        keyboardConfig: KeyboardShortcuts.HOME_ROW,
+      })
+    );
+  }, [keyOctaveOffset]);
 
-  // const handleOctaveUp = useCallback(() => {
-  //   setOctaveOffset(keyOctaveOffset + 1);
-  //   const newRange = noteRange;
-  //   newRange.firstNote += 12;
-  //   newRange.lastNote += 12;
-  //   setNoteRange(newRange);
-  //   setShortCuts(
-  //     KeyboardShortcuts.create({
-  //       ...newRange,
-  //       keyboardConfig: KeyboardShortcuts.HOME_ROW,
-  //     })
-  //   );
-  // }, [keyOctaveOffset]);
-
-  // const handleOctaveDown = useCallback(() => {
-  //   setOctaveOffset(keyOctaveOffset - 1);
-  //   const newRange = noteRange;
-  //   newRange.firstNote -= 12;
-  //   newRange.lastNote -= 12;
-  //   setNoteRange(newRange);
-  //   setShortCuts(
-  //     KeyboardShortcuts.create({
-  //       ...newRange,
-  //       keyboardConfig: KeyboardShortcuts.HOME_ROW,
-  //     })
-  //   );
-  // }, [keyOctaveOffset, noteRange]);
+  const handleOctaveDown = useCallback(() => {
+    setOctaveOffset(keyOctaveOffset - 1);
+    const newRange = noteRange;
+    newRange.firstNote -= 12;
+    newRange.lastNote -= 12;
+    setNoteRange(newRange);
+    setShortCuts(
+      KeyboardShortcuts.create({
+        ...newRange,
+        keyboardConfig: KeyboardShortcuts.HOME_ROW,
+      })
+    );
+  }, [keyOctaveOffset, noteRange]);
   useEffect(() => {
     // const sc1:Array<object> = KeyboardShortcuts.create({
     //   ...noteRange,
@@ -84,6 +92,7 @@ export default function KeyboardSection() {
     // setShortCuts([...sc1, ...sc2]);
   }, []);
 
+  
   const { noteHold, noteRelease } = useAudioEngine();
   return (
     <Grid size={{ xs: 12, md: 6, lg: 9 }}>
